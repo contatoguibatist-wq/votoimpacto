@@ -1,0 +1,369 @@
+{% extends 'painel/base.html' %}
+
+{% block title %}Editar Matéria{% endblock %}
+{% block header_title %}Editor de Manchetes e Artigos{% endblock %}
+
+{% block header_actions %}
+<div class="flex items-center gap-3">
+    <a href="/painel/materias" class="text-xs text-slate-500 hover:text-slate-800 transition-colors">
+        &larr; Voltar às Matérias
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<form method="POST" id="formMateria" onsubmit="return validarEnvio(event)" class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 relative">
+    <input type="hidden" name="conteudo" id="campoConteudo">
+    <input type="hidden" name="acao" id="campoAcao" value="salvar">
+
+    <!-- COLUNA PRINCIPAL: REDAÇÃO EDITORIAL (2/3) -->
+    <div class="lg:col-span-2 space-y-6">
+
+        <!-- CHAPÉU / RETRANCA -->
+        <div>
+            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Chapéu / Retranca</label>
+            <input type="text" name="chapeu" value="{{ m[2] or '' }}" placeholder="Ex: TRANSIÇÃO 2026, INFRAESTRUTURA" 
+                   class="w-full text-xs font-semibold text-[#F59E0B] tracking-wider uppercase border-b border-slate-200 pb-1.5 focus:outline-none focus:border-black bg-transparent">
+        </div>
+
+        <!-- TÍTULO DA MANCHETE (OBRIGATÓRIO) -->
+        <div>
+            <div class="flex items-center justify-between mb-1">
+                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Manchete Principal <span class="text-[#F59E0B]">*</span></label>
+                <span id="badgeTitulo" class="text-[10px] font-medium text-red-500 hidden">Obrigatório</span>
+            </div>
+            <input type="text" name="titulo" id="inputTitulo" value="{{ m[1] }}" required placeholder="Título impactante da matéria..." 
+                   class="w-full text-2xl font-bold text-slate-900 tracking-tight border-b border-slate-200 pb-2 focus:outline-none focus:border-black bg-transparent">
+        </div>
+
+        <!-- SUBTÍTULO / LINHA FINA -->
+        <div>
+            <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Linha Fina (Subtítulo)</label>
+            <textarea name="subtitulo" rows="2" placeholder="Resumo em uma frase para contextualizar o leitor..." 
+                      class="w-full text-sm text-slate-600 italic border-b border-slate-200 pb-1 focus:outline-none focus:border-black bg-transparent resize-none">{{ m[3] or '' }}</textarea>
+        </div>
+
+        <!-- IMAGEM PRINCIPAL / CAPA (OBRIGATÓRIO) -->
+        <div class="bg-slate-50 p-4 rounded border border-slate-200 space-y-3">
+            <div class="flex items-center justify-between">
+                <label class="text-xs font-semibold text-slate-800">Imagem Principal de Capa <span class="text-[#F59E0B]">*</span></label>
+                <span id="badgeCapa" class="text-[10px] font-medium text-red-500 hidden">Obrigatório para publicar</span>
+            </div>
+            <input type="url" name="foto_destaque_url" id="urlFotoDestaque" value="{{ m[7] or '' }}" 
+                   placeholder="https://exemplo.com/foto-alta-resolucao.jpg"
+                   oninput="atualizarPreviaCapa(this.value)"
+                   class="w-full text-xs border border-slate-200 rounded p-2 focus:outline-none focus:border-black bg-white">
+            
+            <div id="previaCapa" class="{{ '' if m[7] else 'hidden' }} mt-2">
+                <img id="imgPreviaCapa" src="{{ m[7] or '' }}" alt="Prévia" class="w-full h-48 object-cover rounded border border-slate-200">
+            </div>
+        </div>
+
+        <!-- BARRA DE FERRAMENTAS DO EDITOR -->
+        <div class="space-y-2 relative">
+            <div class="flex items-center justify-between">
+                <label class="text-xs font-semibold text-slate-800">Corpo da Matéria <span class="text-[#F59E0B]">*</span></label>
+                <span id="badgeCorpo" class="text-[10px] font-medium text-red-500 hidden">Texto obrigatório</span>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-1.5 p-2 bg-slate-50 border border-slate-200 rounded text-xs select-none">
+                <button type="button" onmousedown="event.preventDefault(); formatarDoc('bold')" title="Negrito" class="p-1.5 hover:bg-slate-200 rounded font-bold w-7 text-center">B</button>
+                <button type="button" onmousedown="event.preventDefault(); formatarDoc('italic')" title="Itálico" class="p-1.5 hover:bg-slate-200 rounded italic w-7 text-center">I</button>
+                <button type="button" onmousedown="event.preventDefault(); formatarDoc('underline')" title="Sublinhado" class="p-1.5 hover:bg-slate-200 rounded underline w-7 text-center">U</button>
+                
+                <span class="text-slate-300">|</span>
+
+                <button type="button" onmousedown="event.preventDefault(); formatarDoc('formatBlock', 'p')" title="Parágrafo" class="px-2 py-1 hover:bg-slate-200 rounded text-[11px]">P</button>
+                <button type="button" onmousedown="event.preventDefault(); formatarDoc('formatBlock', 'h3')" title="Intertítulo H3" class="px-2 py-1 hover:bg-slate-200 rounded font-semibold text-[11px]">H3</button>
+
+                <span class="text-slate-300">|</span>
+
+                <!-- PALETA DE CORES RÁPIDA (Não perde a seleção ao clicar) -->
+                <div class="flex items-center gap-1 px-1">
+                    <span class="text-[11px] text-slate-500 mr-1">Cor:</span>
+                    <button type="button" onmousedown="event.preventDefault(); aplicarCorTexto('#F59E0B')" title="Laranja Oficial" class="w-4 h-4 rounded-full bg-[#F59E0B] border border-black/10 hover:scale-110 transition-transform"></button>
+                    <button type="button" onmousedown="event.preventDefault(); aplicarCorTexto('#0f172a')" title="Preto Texto" class="w-4 h-4 rounded-full bg-[#0f172a] border border-black/10 hover:scale-110 transition-transform"></button>
+                    <button type="button" onmousedown="event.preventDefault(); aplicarCorTexto('#dc2626')" title="Vermelho" class="w-4 h-4 rounded-full bg-red-600 border border-black/10 hover:scale-110 transition-transform"></button>
+                    <button type="button" onmousedown="event.preventDefault(); aplicarCorTexto('#2563eb')" title="Azul" class="w-4 h-4 rounded-full bg-blue-600 border border-black/10 hover:scale-110 transition-transform"></button>
+                    
+                    <!-- Color Picker Livre com Preservação de Seleção -->
+                    <label class="cursor-pointer ml-1" title="Outra cor personalizada">
+                        <input type="color" id="pickerLivre" onmousedown="salvarSelecaoCursor()" onchange="aplicarCorDoPicker(this.value)" class="w-4 h-4 p-0 border-0 bg-transparent cursor-pointer">
+                    </label>
+                </div>
+
+                <span class="text-slate-300">|</span>
+
+                <!-- BOTÃO DE LINK COM POPOVER FLUTUANTE -->
+                <button type="button" onmousedown="event.preventDefault(); abrirPopoverLink()" title="Inserir Link" class="px-2 py-1 hover:bg-slate-200 rounded text-[11px] font-medium flex items-center gap-1">
+                    <span>Link</span>
+                </button>
+
+                <!-- BOTÃO DE IMAGEM COM POPOVER FLUTUANTE -->
+                <button type="button" onmousedown="event.preventDefault(); abrirPopoverImagem()" title="Inserir Imagem Inline" class="px-2 py-1 hover:bg-slate-200 rounded text-[11px] font-semibold text-amber-800 flex items-center gap-1">
+                    <span>+ Imagem</span>
+                </button>
+            </div>
+
+            <!-- ÁREA EDITÁVEL WYSIWYG -->
+            <div id="editorCorpo" contenteditable="true" 
+                 class="min-h-[420px] p-5 bg-white border border-slate-200 rounded focus:outline-none focus:border-black text-xs text-slate-800 leading-relaxed font-sans space-y-3 prose max-w-none">
+                {{ m[4]|safe }}
+            </div>
+
+            <!-- 1. POPOVER FLUTUANTE DE LINK (ENCIMA DO TEXTO SELECIONADO) -->
+            <div id="popoverLink" class="hidden absolute z-50 bg-white border border-slate-300 p-2.5 rounded shadow-xl flex items-center gap-2">
+                <input type="url" id="inputUrlLink" placeholder="https://exemplo.com" class="border border-slate-200 rounded px-2 py-1 text-xs w-60 focus:outline-none focus:border-black">
+                <button type="button" onclick="confirmarLinkFlutuante()" class="bg-slate-900 hover:bg-black text-white px-2.5 py-1 rounded text-xs font-semibold">Aplicar</button>
+                <button type="button" onclick="fecharPopovers()" class="text-slate-400 hover:text-slate-600 text-sm px-1">&times;</button>
+            </div>
+
+            <!-- 2. POPOVER FLUTUANTE DE IMAGEM INLINE (NO LOCAL DO CURSOR) -->
+            <div id="popoverImagem" class="hidden absolute z-50 bg-white border border-slate-300 p-2.5 rounded shadow-xl flex items-center gap-2">
+                <input type="url" id="inputUrlImagem" placeholder="URL da imagem (https://...)" class="border border-slate-200 rounded px-2 py-1 text-xs w-64 focus:outline-none focus:border-black">
+                <button type="button" onclick="confirmarImagemFlutuante()" class="bg-amber-500 hover:bg-amber-600 text-white px-2.5 py-1 rounded text-xs font-semibold">Inserir</button>
+                <button type="button" onclick="fecharPopovers()" class="text-slate-400 hover:text-slate-600 text-sm px-1">&times;</button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- COLUNA LATERAL: STATUS E OPÇÕES DE PUBLICAÇÃO (1/3) -->
+    <div class="space-y-6">
+
+        <div class="bg-white border border-slate-200 p-5 rounded space-y-4">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <span class="text-xs font-semibold text-slate-800">Status</span>
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded {{ 'bg-amber-100 text-amber-900' if m[5] == 'Rascunho' else ('bg-emerald-100 text-emerald-900' if m[5] == 'Publicado' else ('bg-blue-100 text-blue-900' if m[5] == 'Agendado' else 'bg-slate-100 text-slate-600')) }}">
+                    {{ m[5] }}
+                </span>
+            </div>
+
+            <!-- AGENDAMENTO DE PUBLICAÇÃO -->
+            <div class="bg-slate-50 p-3 rounded border border-slate-100 space-y-2">
+                <label class="block text-[11px] font-semibold text-slate-700">Programar Data / Hora</label>
+                <input type="datetime-local" name="data_agendada" id="inputDataAgendada" 
+                       value="{{ m[9].strftime('%Y-%m-%dT%H:%M') if m[9] else '' }}"
+                       class="w-full text-xs border border-slate-200 rounded p-1.5 bg-white focus:outline-none focus:border-black">
+                <p class="text-[10px] text-slate-400">Preencha caso queira agendar a matéria para um momento futuro.</p>
+            </div>
+
+            <!-- AÇÕES DE ENVIO -->
+            <div class="pt-2 space-y-2">
+                <!-- 1. PUBLICAR DE UMA VEZ -->
+                <button type="button" onclick="submeterComAcao('publicar')"
+                        class="w-full bg-[#F59E0B] hover:bg-amber-600 text-white font-bold py-2.5 rounded text-xs transition-colors shadow-xs">
+                    Publicar de Uma Vez
+                </button>
+
+                <!-- 2. AGENDAR PUBLICAÇÃO -->
+                <button type="button" onclick="submeterComAcao('agendar')"
+                        class="w-full bg-slate-900 hover:bg-black text-white font-bold py-2 rounded text-xs transition-colors">
+                    Agendar Publicação
+                </button>
+
+                <!-- 3. SALVAR RASCUNHO -->
+                <button type="button" onclick="submeterComAcao('salvar')"
+                        class="w-full border border-slate-200 hover:bg-slate-50 text-slate-700 font-semibold py-1.5 rounded text-xs transition-colors">
+                    Salvar como Rascunho
+                </button>
+
+                <!-- 4. CANCELAR -->
+                {% if m[5] != 'Cancelado' %}
+                <button type="button" onclick="submeterComAcao('cancelar')"
+                        class="w-full text-slate-400 hover:text-red-600 py-1 text-[11px] transition-colors">
+                    Marcar como Cancelada
+                </button>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- REQUISITOS PARA PUBLICAÇÃO -->
+        <div class="p-4 bg-slate-50 rounded border border-slate-200 text-[11px] text-slate-600 space-y-2">
+            <span class="font-semibold text-slate-800 block">Checklist Obrigatório:</span>
+            <div class="flex items-center gap-2">
+                <span id="checkTitulo" class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+                <span>Manchete principal preenchida</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span id="checkCapa" class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+                <span>Imagem principal de capa informada</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span id="checkCorpo" class="w-1.5 h-1.5 rounded-full bg-slate-300"></span>
+                <span>Corpo da matéria redigido</span>
+            </div>
+        </div>
+
+    </div>
+</form>
+
+<script>
+    let selecaoSalva = null;
+
+    // Guarda a posição exata da seleção no DOM
+    function salvarSelecaoCursor() {
+        const sel = window.getSelection();
+        if (sel.getRangeAt && sel.rangeCount) {
+            selecaoSalva = sel.getRangeAt(0);
+        }
+    }
+
+    function restaurarSelecaoCursor() {
+        if (selecaoSalva) {
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(selecaoSalva);
+        }
+    }
+
+    // Comandos de Formatação
+    function formatarDoc(comando, valor = null) {
+        document.execCommand(comando, false, valor);
+    }
+
+    // CORREÇÃO: Aplica cor de forma imediata sem perder seleção
+    function aplicarCorTexto(corHex) {
+        document.execCommand('styleWithCSS', false, true);
+        document.execCommand('foreColor', false, corHex);
+    }
+
+    function aplicarCorDoPicker(corHex) {
+        restaurarSelecaoCursor();
+        aplicarCorTexto(corHex);
+    }
+
+    // POPOVER FLUTUANTE DE LINK (ENCIMA DA SELEÇÃO)
+    function abrirPopoverLink() {
+        salvarSelecaoCursor();
+        const sel = window.getSelection();
+        if (!sel || sel.isCollapsed) {
+            alert("Selecione uma palavra ou trecho com o mouse para aplicar o link.");
+            return;
+        }
+
+        const rect = sel.getRangeAt(0).getBoundingClientRect();
+        const containerRect = document.getElementById('editorCorpo').getBoundingClientRect();
+        const popover = document.getElementById('popoverLink');
+
+        fecharPopovers();
+
+        // Posiciona logo acima da seleção
+        popover.style.top = (rect.top - containerRect.top - 42) + 'px';
+        popover.style.left = Math.max(0, rect.left - containerRect.left) + 'px';
+        popover.classList.remove('hidden');
+
+        document.getElementById('inputUrlLink').value = 'https://';
+        document.getElementById('inputUrlLink').focus();
+    }
+
+    function confirmarLinkFlutuante() {
+        const url = document.getElementById('inputUrlLink').value.trim();
+        if (url && url !== 'https://') {
+            restaurarSelecaoCursor();
+            document.execCommand('createLink', false, url);
+        }
+        fecharPopovers();
+    }
+
+    // POPOVER FLUTUANTE DE IMAGEM INLINE (NO LOCAL DO CURSOR)
+    function abrirPopoverImagem() {
+        salvarSelecaoCursor();
+        const sel = window.getSelection();
+        let topPos = 20;
+        let leftPos = 20;
+
+        if (sel && sel.rangeCount > 0) {
+            const rect = sel.getRangeAt(0).getBoundingClientRect();
+            const containerRect = document.getElementById('editorCorpo').getBoundingClientRect();
+            topPos = Math.max(10, rect.top - containerRect.top - 42);
+            leftPos = Math.max(10, rect.left - containerRect.left);
+        }
+
+        const popover = document.getElementById('popoverImagem');
+        fecharPopovers();
+
+        popover.style.top = topPos + 'px';
+        popover.style.left = leftPos + 'px';
+        popover.classList.remove('hidden');
+
+        document.getElementById('inputUrlImagem').value = '';
+        document.getElementById('inputUrlImagem').focus();
+    }
+
+    function confirmarImagemFlutuante() {
+        const url = document.getElementById('inputUrlImagem').value.trim();
+        if (url) {
+            restaurarSelecaoCursor();
+            document.execCommand('insertImage', false, url);
+        }
+        fecharPopovers();
+    }
+
+    function fecharPopovers() {
+        document.getElementById('popoverLink').classList.add('hidden');
+        document.getElementById('popoverImagem').classList.add('hidden');
+    }
+
+    function atualizarPreviaCapa(url) {
+        const previa = document.getElementById('previaCapa');
+        const img = document.getElementById('imgPreviaCapa');
+        if (url && url.startsWith('http')) {
+            img.src = url;
+            previa.classList.remove('hidden');
+        } else {
+            previa.classList.add('hidden');
+        }
+    }
+
+    // VALIDAÇÃO E DISPARO DE AÇÃO
+    function submeterComAcao(acao) {
+        document.getElementById('campoAcao').value = acao;
+        document.getElementById('campoConteudo').value = document.getElementById('editorCorpo').innerHTML;
+
+        const titulo = document.getElementById('inputTitulo').value.trim();
+        const capa = document.getElementById('urlFotoDestaque').value.trim();
+        const corpo = document.getElementById('editorCorpo').innerText.trim();
+
+        // Se for publicar de uma vez ou agendar, exige os 3 itens
+        if (acao === 'publicar' || acao === 'agendar') {
+            let valido = true;
+
+            if (!titulo) {
+                document.getElementById('badgeTitulo').classList.remove('hidden');
+                valido = false;
+            } else {
+                document.getElementById('badgeTitulo').classList.add('hidden');
+            }
+
+            if (!capa) {
+                document.getElementById('badgeCapa').classList.remove('hidden');
+                valido = false;
+            } else {
+                document.getElementById('badgeCapa').classList.add('hidden');
+            }
+
+            if (!corpo) {
+                document.getElementById('badgeCorpo').classList.remove('hidden');
+                valido = false;
+            } else {
+                document.getElementById('badgeCorpo').classList.add('hidden');
+            }
+
+            if (!valido) {
+                alert('Atenção: Para publicar ou agendar, é obrigatório preencher Título, Imagem Principal e o Texto da matéria.');
+                return;
+            }
+
+            if (acao === 'agendar' && !document.getElementById('inputDataAgendada').value) {
+                alert('Selecione a Data e Horário no campo "Programar Data / Hora" para concluir o agendamento.');
+                document.getElementById('inputDataAgendada').focus();
+                return;
+            }
+        }
+
+        document.getElementById('formMateria').submit();
+    }
+</script>
+{% endblock %}

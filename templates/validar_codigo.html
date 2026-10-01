@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <title>Validação de Acesso | VotoImpacto</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+</head>
+<body class="h-full bg-[#0a0a0a] text-white flex items-center justify-center px-6">
+    <div class="max-w-md w-full bg-[#171717] border border-neutral-800 p-8 relative">
+        <div class="absolute top-0 left-0 w-full h-1 bg-[#F59E0B]"></div>
+        
+        <h1 class="text-2xl font-bold uppercase mb-2 tracking-wider">VOTO<span class="text-[#F59E0B]">IMPACTO</span></h1>
+        <p class="text-xs uppercase text-neutral-400 mb-6">Confirmação de Primeiro Acesso</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="mb-4 space-y-2">
+                    {% for category, message in messages %}
+                        <div class="p-3 text-xs uppercase font-bold {% if category == 'error' %} bg-red-950 border border-red-800 text-red-200 {% else %} bg-emerald-950 border border-emerald-800 text-emerald-200 {% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('auth.validar_codigo_troca') }}" method="POST" class="space-y-4">
+            <div>
+                <label class="block text-xs uppercase font-bold text-neutral-300 mb-1">Código recebido no e-mail</label>
+                <input type="text" name="codigo" required class="w-full bg-[#0a0a0a] border border-neutral-700 p-3 text-white text-sm" placeholder="Ex: 123456">
+            </div>
+            <div>
+                <label class="block text-xs uppercase font-bold text-neutral-300 mb-1">Nova Senha Definitiva</label>
+                <input type="password" name="nova_senha" required class="w-full bg-[#0a0a0a] border border-neutral-700 p-3 text-white text-sm" placeholder="••••••••">
+            </div>
+            <div>
+                <label class="block text-xs uppercase font-bold text-neutral-300 mb-1">Confirmar Nova Senha</label>
+                <input type="password" name="confirma_senha" required class="w-full bg-[#0a0a0a] border border-neutral-700 p-3 text-white text-sm" placeholder="••••••••">
+            </div>
+            <button type="submit" class="w-full bg-[#F59E0B] text-black font-bold uppercase p-4 text-sm hover:bg-white transition-colors">
+                Validar e Entrar no Portal
+            </button>
+        </form>
+    </div>
+</body>
+</html>

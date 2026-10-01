@@ -1,0 +1,276 @@
+{% extends 'painel/base.html' %}
+
+{% block title %}Agenda Semanal{% endblock %}
+{% block header_title %}Agenda de Transição & Calendário Semanal{% endblock %}
+
+{% block header_actions %}
+<div class="flex items-center gap-3">
+    <button onclick="abrirModalManual()" class="bg-slate-900 hover:bg-black text-white px-3.5 py-1.5 rounded text-xs font-medium transition-colors">
+        + Novo Evento
+    </button>
+    <a href="/painel/relatorios/cronograma" target="_blank" class="border border-slate-200 hover:border-slate-400 text-slate-700 px-3 py-1.5 rounded text-xs transition-colors">
+        Imprimir
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- FullCalendar 6.1 (Leve, nativo e idêntico ao Google Calendar) -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+
+<style>
+    /* Estilização minimalista do Calendário */
+    .fc {
+        font-family: 'Inter', -apple-system, sans-serif !important;
+        font-size: 12px;
+    }
+    .fc .fc-toolbar-title {
+        font-size: 15px !important;
+        font-weight: 600 !important;
+        color: #0f172a;
+        letter-spacing: -0.01em;
+    }
+    .fc .fc-button {
+        background-color: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        color: #334155 !important;
+        box-shadow: none !important;
+        font-weight: 500 !important;
+        text-transform: capitalize !important;
+        font-size: 12px !important;
+        padding: 5px 10px !important;
+        border-radius: 4px !important;
+    }
+    .fc .fc-button:hover {
+        background-color: #f8fafc !important;
+        color: #000000 !important;
+    }
+    .fc .fc-button-active {
+        background-color: #f1f5f9 !important;
+        border-color: #cbd5e1 !important;
+        color: #0f172a !important;
+    }
+    .fc .fc-timegrid-slot {
+        height: 44px !important;
+    }
+    .fc-theme-standard td, .fc-theme-standard th {
+        border-color: #f1f5f9 !important;
+    }
+    .fc-col-header-cell-cushion {
+        color: #64748b;
+        font-weight: 600;
+        padding: 8px 0 !important;
+    }
+    /* Estilo dos Blocos de Eventos */
+    .fc-event {
+        background-color: #FFFBEB !important; /* Âmbar suave */
+        border-left: 3px solid #F59E0B !important; /* Laranja da marca */
+        border-top: 0 !important;
+        border-right: 0 !important;
+        border-bottom: 0 !important;
+        color: #78350F !important;
+        border-radius: 2px !important;
+        padding: 2px 4px !important;
+        cursor: pointer;
+    }
+    .fc-event:hover {
+        background-color: #FEF3C7 !important;
+    }
+    .fc-event-main {
+        font-weight: 500 !important;
+        color: #78350F !important;
+    }
+    .fc-timegrid-now-indicator-line {
+        border-color: #F59E0B !important;
+        border-width: 2px !important;
+    }
+</style>
+
+<div class="max-w-7xl mx-auto space-y-4">
+    
+    <!-- Aviso discreto de fluxo -->
+    <div class="flex items-center justify-between text-[11px] text-slate-500 pb-2">
+        <span>Clique e arraste em qualquer horário da grade para registrar uma nova agenda.</span>
+        <span class="flex items-center gap-1.5 text-slate-700">
+            <span class="w-2 h-2 rounded-full bg-[#F59E0B]"></span>
+            Gera pauta automática para o Jornal Oficial
+        </span>
+    </div>
+
+    <!-- Container do Calendário -->
+    <div class="bg-white border border-slate-200 rounded p-4">
+        <div id="calendar"></div>
+    </div>
+</div>
+
+<!-- MODAL DE CRIAÇÃO RÁPIDA (AJAX SEM F5) -->
+<div id="modalNovoEvento" class="hidden fixed inset-0 bg-slate-900/20 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+    <div class="bg-white rounded border border-slate-200 p-6 max-w-md w-full shadow-xl">
+        <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+            <h3 class="text-sm font-semibold text-slate-900">Novo Compromisso</h3>
+            <button type="button" onclick="fecharModal()" class="text-slate-400 hover:text-slate-600 text-lg leading-none">&times;</button>
+        </div>
+
+        <form id="formEvento" onsubmit="salvarEventoAjax(event)" class="space-y-3.5 text-xs">
+            <div>
+                <label class="block text-slate-600 mb-1 font-medium">Título do Evento</label>
+                <input type="text" id="ev_titulo" required placeholder="Ex: Reunião com Secretário de Obras" class="w-full border border-slate-200 rounded p-2 text-slate-900 focus:outline-none focus:border-[#F59E0B]">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-slate-600 mb-1 font-medium">Tipo</label>
+                    <select id="ev_tipo" class="w-full border border-slate-200 rounded p-2 text-slate-900 focus:outline-none focus:border-[#F59E0B]">
+                        <option value="Reunião Política">Reunião Política</option>
+                        <option value="Visita Técnica">Visita Técnica</option>
+                        <option value="Entrevista / Imprensa">Entrevista / Imprensa</option>
+                        <option value="Encontro com Lideranças">Encontro com Lideranças</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-slate-600 mb-1 font-medium">Data e Horário</label>
+                    <input type="datetime-local" id="ev_data" required class="w-full border border-slate-200 rounded p-2 text-slate-900 focus:outline-none focus:border-[#F59E0B]">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-slate-600 mb-1 font-medium">Local</label>
+                <input type="text" id="ev_local" required placeholder="Ex: Palácio da Cidade" class="w-full border border-slate-200 rounded p-2 text-slate-900 focus:outline-none focus:border-[#F59E0B]">
+            </div>
+
+            <div>
+                <label class="block text-slate-600 mb-1 font-medium">Analista Responsável</label>
+                <select id="ev_analista" class="w-full border border-slate-200 rounded p-2 text-slate-900 focus:outline-none focus:border-[#F59E0B]">
+                    <option value="">Selecione o profissional da equipe...</option>
+                    {% for a in analistas %}
+                        <option value="{{ a[1] }}">{{ a[1] }} ({{ a[2] }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-slate-600 mb-1 font-medium">Observações / Roteiro da Pauta</label>
+                <textarea id="ev_obs" rows="2" placeholder="Pontos centrais que a matéria do portal deve cobrir..." class="w-full border border-slate-200 rounded p-2 text-slate-900 focus:outline-none focus:border-[#F59E0B]"></textarea>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                <button type="button" onclick="fecharModal()" class="px-3 py-1.5 text-slate-500 hover:text-slate-900">Cancelar</button>
+                <button type="submit" id="btnSalvar" class="bg-slate-900 hover:bg-black text-white px-4 py-1.5 rounded font-medium transition-colors">
+                    Salvar na Agenda
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    let calendar;
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const calendarEl = document.getElementById('calendar');
+
+        calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'timeGridWeek',
+            locale: 'pt-br',
+            timeZone: 'local',
+            allDaySlot: false,
+            slotMinTime: '07:00:00',
+            slotMaxTime: '22:00:00',
+            slotDuration: '00:30:00',
+            nowIndicator: true,
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'timeGridWeek,timeGridDay'
+            },
+            buttonText: {
+                today: 'Hoje',
+                week: 'Semana',
+                day: 'Dia'
+            },
+            events: '/api/eventos',
+            selectable: true,
+            selectMirror: true,
+
+            // Disparado ao clicar ou arrastar num horário vazio (Google Agenda style)
+            select: function(info) {
+                abrirModalComData(info.startStr);
+            },
+
+            // Disparado ao clicar em um evento existente
+            eventClick: function(info) {
+                alert(
+                    "Compromisso: " + info.event.title + "\n" +
+                    "Tipo: " + info.event.extendedProps.tipo + "\n" +
+                    "Local: " + info.event.extendedProps.localizacao + "\n" +
+                    "Analista: " + info.event.extendedProps.analista + "\n\n" +
+                    "Status: Enviado para a redação de notícias."
+                );
+            }
+        });
+
+        calendar.render();
+    });
+
+    function abrirModalComData(dataIsoStr) {
+    let dt = new Date(dataIsoStr);
+    let offset = dt.getTimezoneOffset() * 60000;
+    let localISOTime = (new Date(dt.getTime() - offset)).toISOString().slice(0, 16);
+
+    document.getElementById('ev_data').value = localISOTime;
+    document.getElementById('ev_titulo').value = '';
+    document.getElementById('ev_local').value = '';
+    document.getElementById('ev_analista').value = ''; // Reseta o select
+    document.getElementById('ev_obs').value = '';
+
+    document.getElementById('modalNovoEvento').classList.remove('hidden');
+    document.getElementById('ev_titulo').focus();
+    }   
+
+    function abrirModalManual() {
+        abrirModalComData(new Date().toISOString());
+    }
+
+    function fecharModal() {
+        document.getElementById('modalNovoEvento').classList.add('hidden');
+    }
+
+    // Requisição assíncrona: cria o evento e a notícia sem recarregar a tela
+    async function salvarEventoAjax(e) {
+        e.preventDefault();
+        const btn = document.getElementById('btnSalvar');
+        btn.disabled = true;
+        btn.innerText = 'Salvando...';
+
+        const payload = {
+            titulo: document.getElementById('ev_titulo').value,
+            tipo: document.getElementById('ev_tipo').value,
+            data_evento: document.getElementById('ev_data').value,
+            localizacao: document.getElementById('ev_local').value,
+            analista_responsavel: document.getElementById('ev_analista').value,
+            observacoes: document.getElementById('ev_obs').value
+        };
+
+        try {
+            const res = await fetch('/api/eventos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                // Atualiza o calendário dinamicamente (Google Agenda style)
+                calendar.refetchEvents();
+                fecharModal();
+            } else {
+                alert('Erro ao registrar compromisso. Verifique os dados.');
+            }
+        } catch (err) {
+            alert('Falha na conexão com o servidor.');
+        } finally {
+            btn.disabled = false;
+            btn.innerText = 'Salvar na Agenda';
+        }
+    }
+</script>
+{% endblock %}

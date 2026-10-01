@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Painel do Mandato{% endblock %} | VotoImpacto</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', '-apple-system', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: #ffffff;
+            color: #0f172a;
+        }
+
+        /* FILTRO PRETO PARA LOGOS BRANCAS */
+        .logo-black {
+            filter: brightness(0) invert(0) !important;
+            display: block;
+        }
+
+        #sidebar {
+            transition: width 0.12s ease-out;
+        }
+
+        .sidebar-collapsed {
+            width: 72px !important;
+        }
+        .sidebar-collapsed .sidebar-text,
+        .sidebar-collapsed .header-expanded {
+            display: none !important;
+        }
+        .sidebar-collapsed .header-collapsed {
+            display: flex !important;
+        }
+        .sidebar-collapsed .nav-item {
+            justify-content: center !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+    </style>
+
+    <script>
+        if (localStorage.getItem('voto_sidebar_state') === 'collapsed') {
+            document.documentElement.classList.add('preload-collapsed');
+        }
+    </script>
+</head>
+<body class="flex h-screen overflow-hidden antialiased bg-white text-slate-900">
+
+    <!-- SIDEBAR PERSISTENTE -->
+    <aside id="sidebar" class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between shrink-0 select-none z-30">
+        <div>
+            <!-- Header Aberto -->
+            <div class="header-expanded h-16 border-b border-slate-100 px-5 flex items-center justify-between">
+                <a href="/painel" class="flex items-center">
+                    <img src="{{ url_for('static', filename='img/logomax.png') }}" alt="VotoImpacto" class="h-6 w-auto object-contain logo-black">
+                </a>
+                <button type="button" onclick="alternarSidebar()" class="p-1.5 text-slate-400 hover:text-black hover:bg-slate-50 rounded transition-colors" title="Recolher Menu">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"></path></svg>
+                </button>
+            </div>
+
+            <!-- Header Fechado -->
+            <div class="header-collapsed hidden py-3 px-2 border-b border-slate-100 flex-col items-center gap-2">
+                <a href="/painel" class="flex items-center justify-center py-1">
+                    <img src="{{ url_for('static', filename='img/logomin.png') }}" alt="VotoImpacto" class="h-6 w-auto object-contain logo-black">
+                </a>
+                <button type="button" onclick="alternarSidebar()" class="p-1 text-slate-400 hover:text-black hover:bg-slate-50 rounded transition-colors" title="Expandir Menu">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"></path></svg>
+                </button>
+            </div>
+
+            <!-- Navegação com Identificação de Rota Ativa (Tempero Laranja #F59E0B) -->
+            <nav class="p-3 space-y-1.5">
+                
+                <!-- Link 1: Visão Geral -->
+                {% set ativo_painel = (request.path == '/painel') %}
+                <a href="/painel" class="nav-item flex items-center gap-3 px-3 py-2 text-xs font-medium rounded transition-colors border-l-2 {{ 'bg-amber-50 text-amber-950 border-[#F59E0B]' if ativo_painel else 'border-transparent text-slate-600 hover:text-black hover:bg-slate-50' }}">
+                    <svg class="w-4 h-4 shrink-0 {{ 'text-[#F59E0B]' if ativo_painel else 'text-slate-400' }}" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"></path></svg>
+                    <span class="sidebar-text">Visão Geral</span>
+                </a>
+
+                <!-- Link 2: Agenda & Cronograma -->
+                {% set ativo_cronograma = (request.path == '/painel/cronograma') %}
+                <a href="/painel/cronograma" class="nav-item flex items-center gap-3 px-3 py-2 text-xs font-medium rounded transition-colors border-l-2 {{ 'bg-amber-50 text-amber-950 border-[#F59E0B]' if ativo_cronograma else 'border-transparent text-slate-600 hover:text-black hover:bg-slate-50' }}">
+                    <svg class="w-4 h-4 shrink-0 {{ 'text-[#F59E0B]' if ativo_cronograma else 'text-slate-400' }}" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"></path></svg>
+                    <span class="sidebar-text">Agenda & Cronograma</span>
+                </a>
+
+                <!-- Link 3: Matérias do Site -->
+                {% set ativo_materias = (request.path == '/painel/materias') %}
+                <a href="/painel/materias" class="nav-item flex items-center gap-3 px-3 py-2 text-xs font-medium rounded transition-colors border-l-2 {{ 'bg-amber-50 text-amber-950 border-[#F59E0B]' if ativo_materias else 'border-transparent text-slate-600 hover:text-black hover:bg-slate-50' }}">
+                    <svg class="w-4 h-4 shrink-0 {{ 'text-[#F59E0B]' if ativo_materias else 'text-slate-400' }}" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5M6 7.5h3v3H6v-3z"></path></svg>
+                    <span class="sidebar-text">Notícias do Portal</span>
+                </a>
+
+                <!-- Link 4: Relatório Executivo -->
+                {% set ativo_relatorio = (request.path == '/painel/relatorios/cronograma') %}
+                <a href="/painel/relatorios/cronograma" target="_blank" class="nav-item flex items-center gap-3 px-3 py-2 text-xs font-medium rounded transition-colors border-l-2 {{ 'bg-amber-50 text-amber-950 border-[#F59E0B]' if ativo_relatorio else 'border-transparent text-slate-600 hover:text-black hover:bg-slate-50' }}">
+                    <svg class="w-4 h-4 shrink-0 {{ 'text-[#F59E0B]' if ativo_relatorio else 'text-slate-400' }}" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"></path></svg>
+                    <span class="sidebar-text">Relatório Executivo</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- Usuário Ativo -->
+        <div class="p-3 border-t border-slate-100">
+            <div class="sidebar-text mb-2 px-2">
+                <span class="block text-[10px] text-slate-400 uppercase tracking-wider font-medium">Mandato</span>
+                <span class="block text-xs font-medium text-slate-800 truncate">{{ session.get('user_name', 'Gabinete') }}</span>
+            </div>
+            <a href="/logout" class="nav-item flex items-center justify-center gap-2 w-full text-slate-400 hover:text-black py-1.5 text-xs transition-colors">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"></path></svg>
+                <span class="sidebar-text">Encerrar</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- ÁREA PRINCIPAL -->
+    <div class="flex-1 flex flex-col overflow-hidden bg-white">
+        <!-- Topbar Discreta -->
+        <header class="h-16 border-b border-slate-100 px-8 flex items-center justify-between shrink-0">
+            <div>
+                <h1 class="text-sm font-semibold text-slate-900 tracking-tight">
+                    {% block header_title %}Painel de Transição{% endblock %}
+                </h1>
+            </div>
+            <div>
+                {% block header_actions %}{% endblock %}
+            </div>
+        </header>
+
+        <!-- Mensagens do Sistema -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="px-8 pt-4">
+              {% for category, message in messages %}
+                <div class="p-3 text-xs border-l-2 {{ 'border-[#F59E0B] text-slate-800 bg-amber-50/40' if category == 'success' else 'border-red-500 text-red-800 bg-red-50/40' }}">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <!-- Conteúdo Principal -->
+        <main class="flex-1 overflow-y-auto px-8 py-8 bg-white">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Script de Alternância sem Delay -->
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        if (localStorage.getItem('voto_sidebar_state') === 'collapsed') {
+            sidebar.classList.add('sidebar-collapsed');
+        }
+
+        function alternarSidebar() {
+            sidebar.classList.toggle('sidebar-collapsed');
+            localStorage.setItem('voto_sidebar_state', sidebar.classList.contains('sidebar-collapsed') ? 'collapsed' : 'expanded');
+        }
+    </script>
+</body>
+</html>

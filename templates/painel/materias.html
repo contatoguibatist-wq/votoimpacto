@@ -1,0 +1,100 @@
+{% extends 'painel/base.html' %}
+
+{% block title %}Notícias do Portal{% endblock %}
+{% block header_title %}Central Editorial & Notícias do Portal{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl space-y-6">
+
+    <!-- CABEÇALHO -->
+    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div>
+            <h2 class="text-xs font-semibold uppercase tracking-wider text-slate-900">Linha Editorial do Mandato</h2>
+            <p class="text-[11px] text-slate-400 mt-0.5">Notícias criadas automaticamente a partir do calendário semanal</p>
+        </div>
+    </div>
+
+    <!-- NAVEGAÇÃO DE ABAS -->
+    <div class="flex items-center gap-6 border-b border-slate-200 text-xs font-medium">
+        <a href="/painel/materias?aba=rascunho" 
+           class="pb-3 flex items-center gap-2 border-b-2 transition-colors {{ 'border-[#F59E0B] text-slate-900 font-semibold' if aba_ativa == 'rascunho' else 'border-transparent text-slate-500 hover:text-slate-800' }}">
+            <span>Em Rascunho</span>
+            <span class="px-1.5 py-0.5 rounded text-[10px] {{ 'bg-amber-100 text-amber-900 font-bold' if aba_ativa == 'rascunho' else 'bg-slate-100 text-slate-500' }}">
+                {{ qtd_rascunho }}
+            </span>
+        </a>
+
+        <a href="/painel/materias?aba=publicados" 
+           class="pb-3 flex items-center gap-2 border-b-2 transition-colors {{ 'border-[#F59E0B] text-slate-900 font-semibold' if aba_ativa == 'publicados' else 'border-transparent text-slate-500 hover:text-slate-800' }}">
+            <span>Publicadas</span>
+            <span class="px-1.5 py-0.5 rounded text-[10px] {{ 'bg-amber-100 text-amber-900 font-bold' if aba_ativa == 'publicados' else 'bg-slate-100 text-slate-500' }}">
+                {{ qtd_publicados }}
+            </span>
+        </a>
+
+        <a href="/painel/materias?aba=cancelados" 
+           class="pb-3 flex items-center gap-2 border-b-2 transition-colors {{ 'border-[#F59E0B] text-slate-900 font-semibold' if aba_ativa == 'cancelados' else 'border-transparent text-slate-500 hover:text-slate-800' }}">
+            <span>Canceladas</span>
+            <span class="px-1.5 py-0.5 rounded text-[10px] {{ 'bg-amber-100 text-amber-900 font-bold' if aba_ativa == 'cancelados' else 'bg-slate-100 text-slate-500' }}">
+                {{ qtd_cancelados }}
+            </span>
+        </a>
+    </div>
+
+    <!-- LISTAGEM DAS MATÉRIAS DA ABA ATIVA -->
+    <div class="divide-y divide-slate-100">
+        {% for m in materias %}
+        <div class="py-4 flex items-center justify-between gap-6 hover:bg-slate-50/50 px-2 -mx-2 rounded transition-colors">
+            
+            <!-- Foto em Miniatura se houver -->
+            <div class="flex items-center gap-4 min-w-0 flex-1">
+                {% if m[6] %}
+                <img src="{{ m[6] }}" alt="" class="w-14 h-14 rounded object-cover border border-slate-200 shrink-0">
+                {% else %}
+                <div class="w-14 h-14 rounded bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 shrink-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"></path></svg>
+                </div>
+                {% endif %}
+
+                <div class="min-w-0">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="text-[10px] font-semibold text-[#F59E0B] uppercase tracking-wider">
+                            {{ m[2] or 'GERAL' }}
+                        </span>
+                        <span class="text-slate-300">·</span>
+                        <span class="text-[11px] text-slate-400">
+                            {{ m[7].strftime('%d/%m/%Y às %H:%M') }}
+                        </span>
+                    </div>
+
+                    <h3 class="text-sm font-semibold text-slate-900 truncate tracking-tight">
+                        {{ m[1] }}
+                    </h3>
+
+                    <p class="text-xs text-slate-500 truncate mt-0.5">
+                        {{ m[3] or 'Sem subtítulo definido.' }}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Botão de Abertura / Edição -->
+            <div class="shrink-0 flex items-center gap-3">
+                <a href="/painel/materias/{{ m[0] }}" 
+                   class="bg-white border border-slate-200 hover:border-black text-slate-800 px-3.5 py-1.5 rounded text-xs font-medium transition-colors">
+                    Abrir Matéria &rarr;
+                </a>
+            </div>
+
+        </div>
+        {% else %}
+        <div class="py-12 text-center text-xs text-slate-400">
+            Nenhuma matéria nesta aba. 
+            {% if aba_ativa == 'rascunho' %}
+            Crie um evento no calendário para gerar uma pauta automaticamente.
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+{% endblock %}

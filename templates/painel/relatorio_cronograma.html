@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Relatório Executivo de Transição | {{ gabinete[0] }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            body { background: white !important; padding: 0 !important; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-white text-gray-900 p-12 max-w-5xl mx-auto font-sans antialiased">
+
+    <!-- BARRA SUPERIOR DE CONTROLE -->
+    <div class="no-print flex justify-between items-center bg-gray-100 border border-gray-300 p-4 mb-8">
+        <span class="text-xs font-semibold text-gray-700 uppercase">Documento Oficial para Despacho do Gabinete</span>
+        <button onclick="window.print()" class="bg-[#0a0a0a] text-white px-5 py-2 font-semibold uppercase text-xs hover:bg-gray-800">
+            Imprimir / Salvar PDF
+        </button>
+    </div>
+
+    <!-- CABEÇALHO DO DOCUMENTO -->
+    <header class="border-b-2 border-gray-900 pb-6 mb-8 flex justify-between items-end">
+        <div>
+            <span class="text-xs font-bold text-[#F59E0B] uppercase tracking-wider">VotoImpacto — Inteligência e Operações</span>
+            <h1 class="text-3xl font-bold uppercase font-['Oswald'] text-gray-900 mt-1">Relatório de Atividades e Cobertura de Transição</h1>
+            <p class="text-sm font-semibold text-gray-700 mt-1">{{ gabinete[0] }} — {{ gabinete[1] }} ({{ gabinete[2] }} / {{ gabinete[3] }})</p>
+            <p class="text-xs text-gray-500 mt-0.5">Emitido em {{ data_geracao.strftime('%d/%m/%Y às %H:%M') }}</p>
+        </div>
+        <div class="text-right">
+            <span class="text-xs font-bold uppercase border border-gray-400 px-3 py-1">Transição 2026</span>
+        </div>
+    </header>
+
+    <!-- TABELA DE AUDITORIA DE AGENDAS -->
+    <table class="w-full text-left border-collapse border border-gray-300 text-xs mb-8">
+        <thead>
+            <tr class="bg-gray-50 border-b border-gray-300 font-semibold text-gray-700 uppercase">
+                <th class="p-3 border-r border-gray-300">Data</th>
+                <th class="p-3 border-r border-gray-300">Compromisso</th>
+                <th class="p-3 border-r border-gray-300">Tipo</th>
+                <th class="p-3 border-r border-gray-300">Localização</th>
+                <th class="p-3 border-r border-gray-300">Analista</th>
+                <th class="p-3 border-r border-gray-300">Status</th>
+                <th class="p-3 text-center">Cortes / Posts</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-200">
+            {% for row in relatorio %}
+            <tr>
+                <td class="p-3 border-r border-gray-200 font-mono text-xs">{{ row[2].strftime('%d/%m/%Y') }}</td>
+                <td class="p-3 border-r border-gray-200 font-semibold text-gray-900">{{ row[0] }}</td>
+                <td class="p-3 border-r border-gray-200 text-gray-600">{{ row[1] }}</td>
+                <td class="p-3 border-r border-gray-200 text-gray-600">{{ row[3] }}</td>
+                <td class="p-3 border-r border-gray-200 text-gray-600">{{ row[5] or '—' }}</td>
+                <td class="p-3 border-r border-gray-200 font-medium text-gray-700">{{ row[4] }}</td>
+                <td class="p-3 text-center font-bold text-gray-900">{{ row[6] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- ASSINATURAS INSTITUCIONAIS -->
+    <div class="mt-20 pt-8 border-t border-gray-300 grid grid-cols-2 gap-12 text-center text-xs text-gray-600">
+        <div>
+            <div class="border-b border-gray-400 pb-1 mb-2 font-semibold uppercase">Coordenação de Produção</div>
+            <span>VotoImpacto Estratégia Política</span>
+        </div>
+        <div>
+            <div class="border-b border-gray-400 pb-1 mb-2 font-semibold uppercase">Ciência da Chefia de Gabinete</div>
+            <span>{{ gabinete[0] }}</span>
+        </div>
+    </div>
+
+</body>
+</html>

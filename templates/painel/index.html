@@ -1,0 +1,126 @@
+{% extends 'painel/base.html' %}
+
+{% block title %}Visão Geral{% endblock %}
+{% block header_title %}Centro de Comando do Gabinete{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl space-y-12">
+
+    <!-- IDENTIFICAÇÃO DO MANDATO -->
+    <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-4 pb-8 border-b border-slate-100">
+        <div>
+            <span class="text-[11px] font-medium text-[#F59E0B] uppercase tracking-wider block mb-1">Mandato em Transição</span>
+            <h2 class="text-2xl font-semibold text-slate-900 tracking-tight">
+                {{ gabinete[0] }}
+            </h2>
+            <p class="text-xs text-slate-500 mt-1">
+                {{ gabinete[1] }} · {{ gabinete[2] }}/{{ gabinete[3] }}
+            </p>
+        </div>
+
+        <div class="sm:text-right">
+            <span class="text-3xl font-light text-slate-900 tracking-tight">{{ dias_posse }}</span>
+            <span class="block text-[11px] text-slate-400">dias até a posse oficial</span>
+        </div>
+    </div>
+
+    <!-- MÉTRICAS TOTALMENTE NO FUNDO BRANCO (SEM CARDS, SEM CAIXAS) -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 pb-10 border-b border-slate-100">
+        <div>
+            <span class="text-[11px] text-slate-400 uppercase tracking-wider block">Agendas de Rua</span>
+            <div class="flex items-baseline gap-1.5 mt-2">
+                <span class="text-3xl font-light text-slate-900 tracking-tight">{{ metricas[0] }}</span>
+                <span class="text-[11px] text-slate-400">cobertas</span>
+            </div>
+        </div>
+
+        <div>
+            <span class="text-[11px] text-slate-400 uppercase tracking-wider block">Posts no Cronograma</span>
+            <div class="flex items-baseline gap-1.5 mt-2">
+                <span class="text-3xl font-light text-slate-900 tracking-tight">{{ metricas[1] }}</span>
+                <span class="text-[11px] text-slate-400">entregues</span>
+            </div>
+        </div>
+
+        <div>
+            <span class="text-[11px] text-slate-400 uppercase tracking-wider block">Notícias Publicadas</span>
+            <div class="flex items-baseline gap-1.5 mt-2">
+                <span class="text-3xl font-light text-slate-900 tracking-tight">{{ metricas[2] }}</span>
+                <span class="text-[11px] text-slate-400">no ar</span>
+            </div>
+        </div>
+
+        <div>
+            <span class="text-[11px] text-[#F59E0B] uppercase tracking-wider block font-medium">Aguardando Validação</span>
+            <div class="flex items-baseline gap-1.5 mt-2">
+                <span class="text-3xl font-light text-slate-900 tracking-tight">{{ metricas[3] }}</span>
+                <span class="text-[11px] text-[#F59E0B]">pendentes</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- LISTAS DE ACOMPANHAMENTO DIRETAS -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 pt-2">
+
+        <!-- Agendas de Campo -->
+        <div>
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+                <span class="text-xs font-semibold text-slate-800 uppercase tracking-wider">Agendas Recentes</span>
+                <a href="/painel/cronograma" class="text-xs text-[#F59E0B] hover:underline">Ver todas</a>
+            </div>
+
+            {% if eventos %}
+            <div class="divide-y divide-slate-100">
+                {% for ev in eventos %}
+                <div class="py-3 flex justify-between items-start gap-4">
+                    <div>
+                        <span class="text-[10px] text-slate-400 uppercase tracking-wider">{{ ev[2] }}</span>
+                        <h4 class="text-xs font-medium text-slate-900 mt-0.5">{{ ev[1] }}</h4>
+                        <p class="text-[11px] text-slate-400 mt-0.5">{{ ev[4] }} · <span class="text-slate-600">{{ ev[6] or 'Sem analista' }}</span></p>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <span class="text-xs font-mono text-slate-600 block">{{ ev[3].strftime('%d/%m') }}</span>
+                        <span class="text-[10px] text-slate-400 mt-0.5 block">{{ ev[5] }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-xs text-slate-400 py-4">Nenhuma agenda agendada.</p>
+            {% endif %}
+        </div>
+
+        <!-- Cronograma de Publicações -->
+        <div>
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+                <span class="text-xs font-semibold text-slate-800 uppercase tracking-wider">Linha de Conteúdo</span>
+                <a href="/painel/cronograma" class="text-xs text-[#F59E0B] hover:underline">Gerenciar</a>
+            </div>
+
+            {% if posts %}
+            <div class="divide-y divide-slate-100">
+                {% for p in posts %}
+                <div class="py-3 flex justify-between items-start gap-4">
+                    <div>
+                        <span class="text-[10px] text-[#F59E0B] font-medium uppercase tracking-wider">{{ p[2] }}</span>
+                        <h4 class="text-xs font-medium text-slate-900 mt-0.5">{{ p[1] }}</h4>
+                        <p class="text-[11px] text-slate-400 line-clamp-1 mt-0.5">{{ p[5] or 'Texto não preenchido.' }}</p>
+                    </div>
+                    <div class="text-right shrink-0">
+                        <span class="text-xs font-mono text-slate-600 block">{{ p[3].strftime('%d/%m') }}</span>
+                        <span class="text-[10px] mt-0.5 block {{ 'text-[#F59E0B] font-medium' if p[4] == 'Aguardando Aprovação' else 'text-slate-400' }}">
+                            {{ p[4] }}
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-xs text-slate-400 py-4">Nenhum post planejado.</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

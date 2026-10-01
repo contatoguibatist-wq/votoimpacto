@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full bg-voto-black">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acesso Restrito | VotoImpacto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global.css') }}">
+
+    <!-- Pré-conexão de fontes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS com a mesma configuração da Index -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Oswald', 'sans-serif'],
+                    },
+                    colors: {
+                        voto: {
+                            orange: '#F59E0B',
+                            black: '#0a0a0a',
+                            dark: '#171717',
+                            gray: '#f4f4f5',
+                            border: '#262626'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        ::selection {
+            background-color: #F59E0B;
+            color: #000;
+        }
+
+        /* Grid Background escuro extraído da index */
+        .bg-grid-dark {
+            background-size: 45px 45px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+
+        /* Toasts Flutuantes */
+        @keyframes toastIn {
+            from { transform: translateX(110%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes toastOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(110%); opacity: 0; }
+        }
+        .toast-show {
+            animation: toastIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .toast-hide {
+            animation: toastOut 0.3s ease-in forwards;
+        }
+    </style>
+</head>
+<body class="min-h-full bg-voto-black text-white antialiased flex flex-col justify-between selection:bg-voto-orange selection:text-black">
+
+    <!-- ==============================================
+         TOAST CONTAINER FLUTUANTE (Canto Superior Direito)
+         ============================================== -->
+    <div id="toast-container" class="fixed top-6 right-6 z-50 flex flex-col gap-3 max-w-md w-full pointer-events-none px-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="toast-item pointer-events-auto toast-show border p-4 bg-[#121212]/95 backdrop-blur-md shadow-2xl flex items-start gap-3 {% if category == 'error' %} border-red-800 text-red-200 {% else %} border-voto-orange/60 text-neutral-100 {% endif %}">
+                        <div class="w-2.5 h-2.5 mt-1 shrink-0 {% if category == 'error' %} bg-red-500 {% else %} bg-voto-orange {% endif %}"></div>
+                        <div class="flex-1 text-xs uppercase tracking-wider font-semibold leading-relaxed font-sans">
+                            {{ message }}
+                        </div>
+                        <button onclick="fecharToast(this.parentElement)" class="text-neutral-500 hover:text-white transition-colors text-lg leading-none cursor-pointer">&times;</button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- ==============================================
+         CORPO PRINCIPAL: SPLIT SCREEN (2 COLUNAS)
+         ============================================== -->
+    <main class="w-full flex-1 flex flex-col lg:flex-row relative">
+        
+        <!-- ==========================================
+             COLUNA ESQUERDA: AUTORIDADE & MARKETING
+             ========================================== -->
+        <section class="lg:w-7/12 relative p-8 sm:p-12 lg:p-20 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-white/10 overflow-hidden bg-[#0d0d0d]">
+            <div class="absolute inset-0 bg-grid-dark z-0 opacity-40"></div>
+            <div class="absolute inset-0 bg-gradient-to-tr from-voto-black via-transparent to-transparent z-0"></div>
+
+            <div class="relative z-10">
+                <!-- Logo Real do Projeto -->
+                <div class="mb-14">
+                    <a href="/" class="inline-block">
+                        <img src="{{ url_for('static', filename='img/logomax.png') }}" alt="VotoImpacto" class="h-10 md:h-12 w-auto object-contain">
+                    </a>
+                </div>
+
+                <!-- Tag de Impacto (Idêntica à Index) -->
+                <div class="inline-flex items-center gap-3 bg-voto-black border border-white/10 px-4 py-2 mb-8 select-none">
+                    <span class="w-2 h-2 bg-voto-orange rounded-full animate-pulse"></span>
+                    <span class="font-display font-bold uppercase tracking-widest text-xs text-white">Ambiente Institucional de Transição</span>
+                </div>
+
+                <!-- Headline Brutalista com Linha Sublinhada -->
+                <h1 class="text-5xl sm:text-6xl lg:text-7xl font-display font-bold uppercase leading-[0.92] tracking-tighter mb-8 text-white select-none">
+                    A posse é em Janeiro.<br>
+                    <span class="text-voto-orange relative inline-block">
+                        O Poder
+                        <span class="absolute bottom-1 left-0 w-full h-2 bg-voto-orange/20"></span>
+                    </span>
+                    <br>Opera Agora.
+                </h1>
+
+                <p class="text-lg md:text-xl text-neutral-400 font-sans leading-relaxed max-w-xl mb-12">
+                    Acesso restrito a prefeitos, vereadores, deputados e coordenadores de gabinete em transição. Documentação de agenda, blindagem narrativa e controle de imagem em tempo real.
+                </p>
+
+                <!-- Métricas Operacionais / Prova de Autoridade -->
+                <div class="grid grid-cols-3 gap-6 pt-8 border-t border-white/10 max-w-lg">
+                    <div>
+                        <span class="text-2xl lg:text-3xl font-display font-bold text-voto-orange block">24/7</span>
+                        <span class="text-[11px] uppercase tracking-wider text-neutral-500 font-semibold">Monitoramento</span>
+                    </div>
+                    <div>
+                        <span class="text-2xl lg:text-3xl font-display font-bold text-white block">100%</span>
+                        <span class="text-[11px] uppercase tracking-wider text-neutral-500 font-semibold">Criptografado</span>
+                    </div>
+                    <div>
+                        <span class="text-2xl lg:text-3xl font-display font-bold text-voto-orange block">Fase 01</span>
+                        <span class="text-[11px] uppercase tracking-wider text-neutral-500 font-semibold">Transição Ativa</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rodapé da Coluna Esquerda -->
+            <div class="relative z-10 mt-14 pt-6 border-t border-white/5 flex items-center gap-3 text-neutral-500 text-xs font-medium">
+                <svg class="w-4 h-4 text-voto-orange shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                <span>Sessões auditadas sob protocolo de sigilo profissional e LGPD.</span>
+            </div>
+        </section>
+
+        <!-- ==========================================
+             COLUNA DIREITA: FORMULÁRIO DE LOGIN / CÓDIGO
+             ========================================== -->
+        <section class="lg:w-5/12 p-8 sm:p-12 lg:p-16 flex flex-col justify-center bg-voto-black relative">
+            <div class="w-full max-w-md mx-auto">
+                
+                {% if not session.get('temp_codigo') %}
+                    <!-- ESTADO 1: AUTENTICAÇÃO INICIAL -->
+                    <div class="mb-10">
+                        <span class="text-voto-orange font-display font-bold uppercase tracking-widest text-xs block mb-2">Terminal de Entrada</span>
+                        <h2 class="text-3xl sm:text-4xl font-display font-bold uppercase text-white tracking-tight">Identifique seu Mandato</h2>
+                        <p class="text-xs uppercase tracking-wider text-neutral-500 mt-2 font-medium">Insira seu e-mail e sua credencial de acesso.</p>
+                    </div>
+
+                    <form action="{{ url_for('auth.login') }}" method="POST" class="space-y-6">
+                        <div>
+                            <label class="block text-white font-display font-bold uppercase tracking-widest text-xs mb-2">
+                                E-mail Institucional
+                            </label>
+                            <input 
+                                type="email" 
+                                name="email" 
+                                required 
+                                autocomplete="email"
+                                class="w-full bg-voto-dark border-b-2 border-white/20 py-3.5 px-4 text-white focus:outline-none focus:border-voto-orange transition-colors text-sm font-sans placeholder:text-neutral-600" 
+                                placeholder="gabinete@votoimpacto.com.br"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="block text-white font-display font-bold uppercase tracking-widest text-xs mb-2">
+                                Chave de Acesso (Provisória ou Definitiva)
+                            </label>
+                            <input 
+                                type="password" 
+                                name="senha" 
+                                required 
+                                class="w-full bg-voto-dark border-b-2 border-white/20 py-3.5 px-4 text-white focus:outline-none focus:border-voto-orange transition-colors text-sm font-sans placeholder:text-neutral-600" 
+                                placeholder="••••••••••••"
+                            >
+                        </div>
+
+                        <button 
+                            type="submit" 
+                            class="w-full bg-white text-black font-display font-bold uppercase tracking-widest text-lg py-5 mt-4 hover:bg-voto-orange hover:text-black transition-all border-2 border-white hover:border-voto-orange shadow-[6px_6px_0px_0px_#F59E0B] hover:shadow-[2px_2px_0px_0px_#F59E0B] hover:translate-x-1 hover:translate-y-1 cursor-pointer"
+                        >
+                            Acessar Central de Transição &rarr;
+                        </button>
+                    </form>
+
+                {% else %}
+                    <!-- ESTADO 2: PRIMEIRO ACESSO (NA MESMA PÁGINA) -->
+                    <div class="mb-8">
+                        <span class="text-voto-orange font-display font-bold uppercase tracking-widest text-xs block mb-2">Validação em 2 Etapas</span>
+                        <h2 class="text-3xl sm:text-4xl font-display font-bold uppercase text-white tracking-tight">Primeiro Acesso</h2>
+                        <p class="text-xs uppercase tracking-wider text-neutral-400 mt-2 font-medium">
+                            Enviamos um código de 6 dígitos ao seu e-mail. Digite o código e crie sua senha permanente.
+                        </p>
+                    </div>
+
+                    <form action="{{ url_for('auth.login') }}" method="POST" class="space-y-5">
+                        <input type="hidden" name="acao" value="confirmar_codigo">
+
+                        <div>
+                            <label class="block text-white font-display font-bold uppercase tracking-widest text-xs mb-2">
+                                Código de 6 Dígitos
+                            </label>
+                            <input 
+                                type="text" 
+                                name="codigo" 
+                                required 
+                                maxlength="6"
+                                class="w-full bg-voto-dark border-b-2 border-voto-orange py-3 px-4 text-voto-orange font-mono text-2xl tracking-[0.4em] text-center focus:outline-none" 
+                                placeholder="000000"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="block text-white font-display font-bold uppercase tracking-widest text-xs mb-2">
+                                Nova Senha Definitiva
+                            </label>
+                            <input 
+                                type="password" 
+                                name="nova_senha" 
+                                required 
+                                class="w-full bg-voto-dark border-b-2 border-white/20 py-3.5 px-4 text-white focus:outline-none focus:border-voto-orange transition-colors text-sm font-sans placeholder:text-neutral-600" 
+                                placeholder="••••••••••••"
+                            >
+                        </div>
+
+                        <div>
+                            <label class="block text-white font-display font-bold uppercase tracking-widest text-xs mb-2">
+                                Confirmar Nova Senha
+                            </label>
+                            <input 
+                                type="password" 
+                                name="confirma_senha" 
+                                required 
+                                class="w-full bg-voto-dark border-b-2 border-white/20 py-3.5 px-4 text-white focus:outline-none focus:border-voto-orange transition-colors text-sm font-sans placeholder:text-neutral-600" 
+                                placeholder="••••••••••••"
+                            >
+                        </div>
+
+                        <button 
+                            type="submit" 
+                            class="w-full bg-voto-orange text-black font-display font-bold uppercase tracking-widest text-lg py-5 mt-2 hover:bg-white hover:text-black transition-all border-2 border-voto-orange hover:border-white shadow-[6px_6px_0px_0px_#FFFFFF] cursor-pointer"
+                        >
+                            Gravar Senha e Iniciar &rarr;
+                        </button>
+
+                        <div class="text-center pt-4">
+                            <a href="{{ url_for('auth.cancelar_validacao') }}" class="text-xs uppercase font-display tracking-widest text-neutral-500 hover:text-voto-orange transition-colors">
+                                &larr; Cancelar e voltar ao login
+                            </a>
+                        </div>
+                    </form>
+                {% endif %}
+
+                <div class="mt-12 pt-6 border-t border-white/10 flex justify-between items-center text-[11px] font-display uppercase tracking-widest text-neutral-600">
+                    <a href="/" class="hover:text-white transition-colors">&larr; Voltar ao Site Oficial</a>
+                    <span>VotoImpacto &copy; 2026</span>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==============================================
+         SCRIPTS: CONTROLE DOS TOASTS
+         ============================================== -->
+    <script>
+        function fecharToast(toast) {
+            toast.classList.remove('toast-show');
+            toast.classList.add('toast-hide');
+            setTimeout(() => {
+                if (toast && toast.parentElement) {
+                    toast.remove();
+                }
+            }, 300);
+        }
+
+        // Auto-remove após 4.5 segundos
+        document.querySelectorAll('.toast-item').forEach(toast => {
+            setTimeout(() => {
+                if (toast && toast.parentElement) {
+                    fecharToast(toast);
+                }
+            }, 4500);
+        });
+    </script>
+</body>
+</html>
