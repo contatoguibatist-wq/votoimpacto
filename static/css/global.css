@@ -1,0 +1,106 @@
+/* ==========================================================================
+   VOTOIMPACTO - CSS GLOBAL & RESPONSIVIDADE UNIFICADA
+   ========================================================================== */
+
+/* Reset de seleção e comportamento mobile */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    overflow-x: hidden;
+    width: 100%;
+}
+
+/* Proteção de arrastar imagens e seleção azul indesejada */
+img {
+    -webkit-user-drag: none;
+    user-select: none;
+}
+
+.no-select {
+    user-select: none;
+}
+
+/* ==========================================================================
+   TIPOGRAFIA RESPONSIVA (Fluida para telas menores)
+   ========================================================================== */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 3.25rem !important; /* Reduz títulos gigantes em celulares */
+        line-height: 1.05 !important;
+    }
+    h2 {
+        font-size: 2.5rem !important;
+    }
+    .hero-container {
+        padding-top: 8rem !important;
+        padding-bottom: 4rem !important;
+    }
+}
+
+/* ==========================================================================
+   MENU MOBILE / HAMBÚRGUER (Para o navbar.html)
+   ========================================================================== */
+.mobile-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 80%;
+    max-width: 400px;
+    height: 100vh;
+    background-color: #0a0a0a;
+    color: #ffffff;
+    z-index: 100;
+    transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+}
+
+.mobile-menu.open {
+    right: 0;
+}
+
+.menu-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 99;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.menu-overlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* ==========================================================================
+   AJUSTES DE GRIDS E CONTAINERS PARA TABLETS E CELULARES
+   ========================================================================== */
+@media (max-width: 1024px) {
+    .service-row {
+        flex-direction: column !important;
+        gap: 1.5rem !important;
+    }
+    .sticky-sidebar {
+        position: relative !important;
+        top: 0 !important;
+    }
+}
+
+/* Correção de paddings laterais globais para mobile */
+@media (max-width: 640px) {
+    .px-6 {
+        padding-left: 1.25rem !important;
+        padding-right: 1.25rem !important;
+    }
+    .py-32 {
+        padding-top: 5rem !important;
+        padding-bottom: 5rem !important;
+    }
+}

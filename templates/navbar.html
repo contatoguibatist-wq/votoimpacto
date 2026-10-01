@@ -1,20 +1,75 @@
 <header class="fixed w-full top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 transition-all">
     <div class="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center h-24">
         <div>
-            <!-- A classe logo-black escurece, e o draggable="false" impede que o usuário "puxe" a imagem -->
             <a href="/">
                 <img src="{{ url_for('static', filename='img/logomax.png') }}" alt="VotoImpacto" class="h-8 md:h-10 hover:opacity-70 transition-opacity logo-black select-none" draggable="false">
             </a>
         </div>
+        
+        <!-- Menu Desktop -->
         <nav class="hidden md:flex gap-10 items-center text-sm font-bold uppercase tracking-widest text-gray-800">
             <a href="/" class="hover:text-[#F59E0B] transition-colors">Início</a>
             <a href="/servicosdetalhe" class="hover:text-[#F59E0B] transition-colors">Serviços</a>
-            <a href="/#dinamica" class="hover:text-[#F59E0B] transition-colors">O Método</a>
+            <a href="/#metodo" class="hover:text-[#F59E0B] transition-colors">O Método</a>
         </nav>
-        <div>
+
+        <div class="hidden md:block">
             <a href="/#contato" class="bg-[#F59E0B] text-black font-bold uppercase tracking-wider px-8 py-3 hover:bg-black hover:text-white transition-colors duration-300">
                 Agendar Reunião
             </a>
         </div>
+
+        <!-- Botão Hambúrguer (Apenas Mobile) -->
+        <button id="hamburger-btn" class="md:hidden flex flex-col justify-center items-center w-10 h-10 space-y-1.5 focus:outline-none">
+            <span class="w-7 h-0.5 bg-black transition-transform duration-300"></span>
+            <span class="w-7 h-0.5 bg-black transition-opacity duration-300"></span>
+            <span class="w-7 h-0.5 bg-black transition-transform duration-300"></span>
+        </button>
     </div>
 </header>
+
+<!-- Overlay Escuro do Menu Mobile -->
+<div id="menu-overlay" class="menu-overlay"></div>
+
+<!-- Gaveta do Menu Mobile -->
+<div id="mobile-drawer" class="mobile-menu">
+    <div class="flex justify-between items-center mb-12">
+        <span class="font-display font-bold uppercase tracking-widest text-voto-orange text-lg">Menu</span>
+        <button id="close-drawer" class="text-white text-3xl font-light focus:outline-none">&times;</button>
+    </div>
+    <nav class="flex flex-col gap-6 text-xl font-display font-bold uppercase tracking-widest">
+        <a href="/" class="mobile-link hover:text-[#F59E0B] transition-colors">Início</a>
+        <a href="/servicosdetalhe" class="mobile-link hover:text-[#F59E0B] transition-colors">Serviços</a>
+        <a href="/#metodo" class="mobile-link hover:text-[#F59E0B] transition-colors">O Método</a>
+    </nav>
+    <div class="mt-auto pt-8 border-t border-white/10">
+        <a href="/#contato" class="mobile-link block text-center bg-[#F59E0B] text-black font-bold uppercase tracking-wider py-4 hover:bg-white transition-colors">
+            Agendar Reunião
+        </a>
+    </div>
+</div>
+
+<!-- Script do Menu Mobile -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const btn = document.getElementById('hamburger-btn');
+        const drawer = document.getElementById('mobile-drawer');
+        const overlay = document.getElementById('menu-overlay');
+        const closeBtn = document.getElementById('close-drawer');
+        const links = document.querySelectorAll('.mobile-link');
+
+        function toggleMenu() {
+            drawer.classList.toggle('open');
+            overlay.classList.toggle('open');
+            document.body.classList.toggle('overflow-hidden');
+        }
+
+        btn.addEventListener('click', toggleMenu);
+        closeBtn.addEventListener('click', toggleMenu);
+        overlay.addEventListener('click', toggleMenu);
+        
+        links.forEach(link => {
+            link.addEventListener('click', toggleMenu);
+        });
+    });
+</script>
