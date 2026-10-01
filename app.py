@@ -5,13 +5,13 @@ app = Flask(__name__, template_folder='templates')
 
 @app.route('/')
 def index():
-    # Caminho para a pasta de clientes
     clientes_dir = os.path.join(app.static_folder, 'img/clientes')
-    
-    # Lê os arquivos da pasta se ela existir
     clientes_logos = []
-    if os.path.exists(clientes_dir):
-        # Filtra para garantir que só pegue imagens
+    
+    # Cria a pasta automaticamente se ela não existir para evitar crash
+    if not os.path.exists(clientes_dir):
+        os.makedirs(clientes_dir, exist_ok=True)
+    else:
         clientes_logos = [f for f in os.listdir(clientes_dir) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.svg', '.webp'))]
         
     return render_template('public/index.html', clientes_logos=clientes_logos)
