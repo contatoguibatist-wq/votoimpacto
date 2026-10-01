@@ -1,0 +1,20 @@
+<header class="fixed w-full top-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200 transition-all">
+    <div class="max-w-7xl mx-auto px-6 md:px-12 flex justify-between items-center h-24">
+        <div>
+            <!-- A classe logo-black escurece, e o draggable="false" impede que o usuário "puxe" a imagem -->
+            <a href="/">
+                <img src="{{ url_for('static', filename='img/logomax.png') }}" alt="VotoImpacto" class="h-8 md:h-10 hover:opacity-70 transition-opacity logo-black select-none" draggable="false">
+            </a>
+        </div>
+        <nav class="hidden md:flex gap-10 items-center text-sm font-bold uppercase tracking-widest text-gray-800">
+            <a href="/" class="hover:text-[#F59E0B] transition-colors">Início</a>
+            <a href="/servicosdetalhe" class="hover:text-[#F59E0B] transition-colors">Serviços</a>
+            <a href="/#dinamica" class="hover:text-[#F59E0B] transition-colors">O Método</a>
+        </nav>
+        <div>
+            <a href="/#contato" class="bg-[#F59E0B] text-black font-bold uppercase tracking-wider px-8 py-3 hover:bg-black hover:text-white transition-colors duration-300">
+                Agendar Reunião
+            </a>
+        </div>
+    </div>
+</header>

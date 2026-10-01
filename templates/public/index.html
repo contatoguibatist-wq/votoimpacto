@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VotoImpacto | Comunicação Pós-Eleição e Transição de Mandato</title>
+    
+    <!-- Pré-conexão para carregar fontes mais rápido -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Fontes: Oswald para impacto brutalista, Inter para legibilidade -->
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Oswald', 'sans-serif'],
+                    },
+                    colors: {
+                        voto: {
+                            orange: '#F59E0B',
+                            black: '#0a0a0a',
+                            dark: '#171717',
+                            gray: '#f4f4f5',
+                            border: '#e5e7eb'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- CSS Customizado (Avançado) -->
+    <style>
+        /* Reset de seleção para manter o aspecto de aplicativo/SaaS */
+        ::selection {
+            background-color: #F59E0B;
+            color: #000;
+        }
+        
+        body {
+            background-color: #ffffff;
+            color: #0a0a0a;
+            overflow-x: hidden;
+        }
+
+        /* Scrollbar customizada editorial */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f4f4f5; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d4d4d8; 
+            border-radius: 0px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #F59E0B; 
+        }
+
+        /* Bloqueios de interação nas imagens */
+        img {
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-select: none;
+        }
+
+        /* O Tempero 1: Grid Background */
+        .bg-grid-light {
+            background-size: 50px 50px;
+            background-image: 
+                linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+        }
+
+        .bg-grid-dark {
+            background-size: 50px 50px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+
+        /* Logo Escura no Topo Claro */
+        .logo-black {
+            filter: invert(1) brightness(0);
+        }
+
+        /* Slider Infinito de Logos */
+        .logo-slider {
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+            width: 100%;
+            /* Efeito de sumir nas bordas (fade edge) */
+            mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+        }
+        .logo-track {
+            display: inline-flex;
+            align-items: center;
+            gap: 6rem;
+            animation: slide 30s linear infinite;
+        }
+        .logo-track:hover {
+            animation-play-state: paused; /* Pausa quando o mouse passa por cima */
+        }
+        @keyframes slide {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Interação nas Logos dos Clientes (Sem alterar a cor original) */
+        .logo-cliente {
+            opacity: 0.8;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .logo-cliente:hover {
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        /* Animações de Scroll Profissionais */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+
+        /* Estilo da Seção de Serviços (Linhas Laranjas) */
+        .service-row {
+            transition: all 0.4s ease;
+            position: relative;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .service-row::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background-color: #F59E0B;
+            transition: width 0.4s ease;
+            z-index: 0;
+        }
+        .service-row:hover::before {
+            width: 6px;
+        }
+        .service-row:hover {
+            background-color: rgba(255, 255, 255, 0.02);
+            padding-left: 2rem;
+        }
+        .service-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Acordeão do FAQ */
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, padding 0.5s ease;
+        }
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            padding-top: 1rem;
+            padding-bottom: 1.5rem;
+        }
+        .faq-icon {
+            transition: transform 0.3s ease;
+        }
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+        }
+    </style>
+</head>
+<body class="antialiased flex flex-col min-h-screen">
+
+    <!-- Chama o Navbar via Jinja2 -->
+    {% include 'public/navbar.html' %}
+
+    <!-- ==============================================
+         1. HERO SECTION (Dobras Iniciais)
+         ============================================== -->
+    <section class="relative pt-40 pb-20 md:pt-48 md:pb-32 px-6 md:px-12 w-full bg-[#f8f9fa] border-b border-gray-200 overflow-hidden min-h-[90vh] flex items-center">
+        <!-- Fundo de Grade e Gradiente -->
+        <div class="absolute inset-0 bg-grid-light z-0 opacity-50"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-white via-transparent to-[#f8f9fa] z-0"></div>
+        
+        <div class="max-w-7xl mx-auto w-full flex flex-col items-start relative z-10 reveal">
+            <!-- Tag de Impacto -->
+            <div class="inline-flex items-center gap-3 bg-voto-black text-white px-4 py-2 mb-8 select-none">
+                <span class="w-2 h-2 bg-voto-orange rounded-full animate-pulse"></span>
+                <span class="font-display font-bold uppercase tracking-widest text-xs">Atenção Gabinetes Eleitos</span>
+            </div>
+            
+            <!-- Título Gigante (Bloqueado para seleção) -->
+            <h1 class="text-6xl md:text-[6.5rem] lg:text-[8rem] font-display font-bold uppercase leading-[0.9] mb-8 text-voto-black tracking-tighter select-none">
+                Você Venceu.<br>
+                <span class="text-voto-orange relative inline-block">
+                    A Cobrança
+                    <span class="absolute bottom-2 left-0 w-full h-2 bg-voto-orange/20"></span>
+                </span>
+                <br>Começou.
+            </h1>
+            
+            <!-- Descrição e CTA -->
+            <div class="flex flex-col mt-4 max-w-3xl">
+                <p class="text-xl md:text-2xl text-gray-700 font-sans leading-relaxed mb-10 font-medium">
+                    A posse oficial acontece apenas no dia 1º de Janeiro. No entanto, o seu eleitor já espera postura de líder hoje. 
+                    Nós estruturamos a sua <strong class="text-voto-black">Central de Comunicação Oficial</strong> para blindar a sua imagem durante toda a transição de mandato.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-6">
+                    <a href="#solucoes" class="bg-voto-black text-white font-display font-bold uppercase tracking-widest px-10 py-5 hover:bg-voto-orange hover:text-black transition-all border-2 border-voto-black text-center text-lg shadow-[8px_8px_0px_0px_rgba(245,158,11,1)] hover:shadow-[4px_4px_0px_0px_rgba(245,158,11,1)] hover:translate-y-1 hover:translate-x-1">
+                        Estruturar meu Mandato
+                    </a>
+                    <a href="#metodo" class="bg-transparent text-voto-black font-display font-bold uppercase tracking-widest px-10 py-5 hover:bg-gray-100 transition-colors border-2 border-transparent hover:border-gray-200 text-center text-lg">
+                        Ver como funciona &darr;
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==============================================
+         2. SOCIAL PROOF (Slider Automático de Clientes na Cor Original)
+         ============================================== -->
+    <section class="py-16 bg-white border-b border-gray-100 overflow-hidden">
+        <div class="max-w-7xl mx-auto text-center reveal">
+            <h3 class="text-xs font-display font-bold tracking-[0.2em] uppercase text-gray-400 mb-10 select-none">
+                Gabinetes em transição que já confiam na VotoImpacto
+            </h3>
+            
+            <div class="logo-slider">
+                <div class="logo-track">
+                    <!-- Primeiro Loop Original -->
+                    {% if clientes_logos %}
+                        {% for logo in clientes_logos %}
+                            <img src="{{ url_for('static', filename='img/clientes/' + logo) }}" alt="Mandato VotoImpacto" class="h-10 md:h-14 logo-cliente" draggable="false">
+                        {% endfor %}
+                        <!-- Segundo Loop (Cópia exata) para dar o efeito infinito sem quebrar a faixa -->
+                        {% for logo in clientes_logos %}
+                            <img src="{{ url_for('static', filename='img/clientes/' + logo) }}" alt="Mandato VotoImpacto" class="h-10 md:h-14 logo-cliente" draggable="false">
+                        {% endfor %}
+                    {% else %}
+                        <!-- Textos placeholder se a pasta estiver vazia -->
+                        <span class="font-display text-2xl font-bold uppercase text-gray-200 tracking-widest select-none">Gabinete Alpha</span>
+                        <span class="font-display text-2xl font-bold uppercase text-gray-200 tracking-widest select-none">Mandato Beta</span>
+                        <span class="font-display text-2xl font-bold uppercase text-gray-200 tracking-widest select-none">Comitê Delta</span>
+                        <!-- Repetição para o slider não quebrar se não tiver logo -->
+                        <span class="font-display text-2xl font-bold uppercase text-gray-200 tracking-widest select-none">Gabinete Alpha</span>
+                        <span class="font-display text-2xl font-bold uppercase text-gray-200 tracking-widest select-none">Mandato Beta</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==============================================
+         3. MANIFESTO / O PROBLEMA
+         ============================================== -->
+    <section class="py-32 px-6 md:px-12 bg-voto-gray">
+        <div class="max-w-5xl mx-auto text-center reveal">
+            <svg class="w-12 h-12 mx-auto text-voto-orange mb-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            <h2 class="text-4xl md:text-5xl font-display font-bold uppercase leading-tight mb-8 text-voto-black select-none">
+                O Erro Fatal: Achar que a <br>Comunicação pode tirar férias.
+            </h2>
+            <p class="text-xl md:text-2xl text-gray-600 font-medium leading-relaxed mb-8 text-justify md:text-center">
+                Muitos candidatos vencem e desaparecem até o dia da posse. Isso abre margem para a oposição pautar a narrativa. 
+                A fase pós-eleição é o momento crítico onde você está montando equipe, articulando apoio e recebendo demandas. 
+                <strong class="text-voto-black bg-voto-orange/20 px-2">Isso precisa ser documentado e publicado profissionalmente.</strong>
+            </p>
+        </div>
+    </section>
+
+    <!-- ==============================================
+         4. SOLUÇÕES (O Núcleo - Fundo Preto Brutal)
+         ============================================== -->
+    <section id="solucoes" class="py-32 px-6 md:px-12 bg-voto-black text-white w-full relative overflow-hidden">
+        <div class="absolute inset-0 bg-grid-dark z-0 opacity-30"></div>
+        
+        <div class="max-w-7xl mx-auto relative z-10">
+            <!-- Header da Seção -->
+            <div class="mb-24 reveal flex flex-col md:flex-row justify-between items-end gap-8 border-b-2 border-white/10 pb-12">
+                <div>
+                    <span class="text-voto-orange font-bold uppercase tracking-widest text-sm mb-4 block select-none">Nosso Escopo Técnico</span>
+                    <h2 class="text-5xl md:text-7xl font-display font-bold uppercase text-white leading-none select-none">A Tríade <br>da Autoridade</h2>
+                </div>
+                <div class="max-w-md">
+                    <p class="text-lg text-gray-400 leading-relaxed font-medium">
+                        Abandonamos artes amadoras. Entregamos tecnologia, mão de obra em campo e estratégia de distribuição para consolidar a sua imagem institucional.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Lista de Serviços (Efeito Hover Avançado) -->
+            <div class="w-full">
+                
+                <!-- Serviço 01 -->
+                <div class="service-row py-12 md:py-16 flex flex-col md:flex-row gap-8 md:gap-16 items-start reveal delay-100">
+                    <div class="md:w-1/4 service-content">
+                        <span class="text-6xl md:text-7xl font-display font-bold text-gray-800 select-none">01</span>
+                    </div>
+                    <div class="md:w-3/4 service-content">
+                        <h4 class="text-3xl md:text-4xl font-display font-bold uppercase text-white mb-6 select-none">Site e Portal Institucional</h4>
+                        <p class="text-xl text-gray-400 mb-8 max-w-3xl leading-relaxed">
+                            Construímos o seu endereço oficial na internet. Um portal com biografia, mural de projetos e um sistema de <strong>Jornal Próprio</strong>, onde nossa redação transforma cada passo seu em matéria documentada.
+                        </p>
+                        <div class="flex flex-wrap gap-6 uppercase text-xs font-display font-bold text-voto-orange tracking-widest">
+                            <span class="border border-voto-orange/30 px-3 py-1">Layout Premium</span>
+                            <span class="border border-voto-orange/30 px-3 py-1">Hospedagem Dedicada</span>
+                            <span class="border border-voto-orange/30 px-3 py-1">Redação de Matérias</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Serviço 02 -->
+                <div class="service-row py-12 md:py-16 flex flex-col md:flex-row gap-8 md:gap-16 items-start reveal delay-200">
+                    <div class="md:w-1/4 service-content">
+                        <span class="text-6xl md:text-7xl font-display font-bold text-gray-800 select-none">02</span>
+                    </div>
+                    <div class="md:w-3/4 service-content">
+                        <h4 class="text-3xl md:text-4xl font-display font-bold uppercase text-white mb-6 select-none">Analista de Acompanhamento (Rua)</h4>
+                        <p class="text-xl text-gray-400 mb-8 max-w-3xl leading-relaxed">
+                            Acabe com fotos tremidas feitas pela assessoria. Despachamos um profissional com equipamento corporativo para acompanhar suas agendas, reuniões de transição e discursos com captação de áudio lapela.
+                        </p>
+                        <div class="flex flex-wrap gap-6 uppercase text-xs font-display font-bold text-voto-orange tracking-widest">
+                            <span class="border border-voto-orange/30 px-3 py-1">Fotografia Profissional</span>
+                            <span class="border border-voto-orange/30 px-3 py-1">Gravação 4K</span>
+                            <span class="border border-voto-orange/30 px-3 py-1">Áudio Direcional</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Serviço 03 -->
+                <div class="service-row py-12 md:py-16 flex flex-col md:flex-row gap-8 md:gap-16 items-start reveal delay-300">
+                    <div class="md:w-1/4 service-content">
+                        <span class="text-6xl md:text-7xl font-display font-bold text-gray-800 select-none">03</span>
+                    </div>
+                    <div class="md:w-3/4 service-content">
+                        <h4 class="text-3xl md:text-4xl font-display font-bold uppercase text-white mb-6 select-none">Social Media (Distribuição)</h4>
+                        <p class="text-xl text-gray-400 mb-8 max-w-3xl leading-relaxed">
+                            O material bruto chega na agência e nós o lapidamos. Editamos vídeos curtos (Reels/TikTok) extraindo suas melhores falas, montamos carrosséis fotográficos e mantemos as redes ativas e engajadas.
+                        </p>
+                        <div class="flex flex-wrap gap-6 uppercase text-xs font-display font-bold text-voto-orange tracking-widest">
+                            <span class="border border-voto-orange/30 px-3 py-1">Edição de Cortes Dinâmicos</span>
+                            <span class="border border-voto-orange/30 px-3 py-1">Legendas Automáticas</span>
+                            <span class="border border-voto-orange/30 px-3 py-1">Gestão de Cronograma</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Link extra para o dossiê -->
+                <div class="pt-12 text-right reveal">
+                    <a href="/servicosdetalhe" class="text-white hover:text-voto-orange font-display uppercase tracking-widest font-bold border-b border-voto-orange pb-1 transition-colors">
+                        Ler o Manual Completo de Operações &rarr;
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ==============================================
+         5. METODOLOGIA (O Fluxo de Trabalho)
+         ============================================== -->
+    <section id="metodo" class="py-32 px-6 md:px-12 bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-20 reveal">
+                <h2 class="text-5xl md:text-6xl font-display font-bold uppercase leading-none mb-6 text-voto-black">A Engrenagem da Notícia</h2>
+                <p class="text-xl font-medium text-gray-600 max-w-3xl mx-auto">
+                    Nosso trabalho é cíclico. Toda semana nossa agência opera em sincronia com o seu gabinete.
+                </p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-0 border-y border-gray-200 divide-y md:divide-y-0 md:divide-x divide-gray-200">
+                <!-- Step 1 -->
+                <div class="reveal p-10 hover:bg-gray-50 transition-colors">
+                    <span class="text-2xl font-display font-black text-voto-orange block mb-6">ETAPA 01</span>
+                    <h4 class="text-2xl font-bold uppercase mb-4 text-voto-black leading-tight">Alinhamento <br>de Agenda</h4>
+                    <p class="text-gray-600 font-medium">Você nos informa onde estará. Nós enviamos o roteiro e as pautas que precisam ser destacadas.</p>
+                </div>
+                <!-- Step 2 -->
+                <div class="reveal delay-100 p-10 hover:bg-gray-50 transition-colors">
+                    <span class="text-2xl font-display font-black text-voto-orange block mb-6">ETAPA 02</span>
+                    <h4 class="text-2xl font-bold uppercase mb-4 text-voto-black leading-tight">Rua e <br>Captação</h4>
+                    <p class="text-gray-600 font-medium">Garantimos a fotografia e a filmagem profissional do evento, com atenção a discursos e conversas estratégicas.</p>
+                </div>
+                <!-- Step 3 -->
+                <div class="reveal delay-200 p-10 hover:bg-gray-50 transition-colors">
+                    <span class="text-2xl font-display font-black text-voto-orange block mb-6">ETAPA 03</span>
+                    <h4 class="text-2xl font-bold uppercase mb-4 text-voto-black leading-tight">Mesa de <br>Redação</h4>
+                    <p class="text-gray-600 font-medium">O material é processado. Nossa equipe escreve a matéria e publica instantaneamente no seu Site Oficial.</p>
+                </div>
+                <!-- Step 4 -->
+                <div class="reveal delay-300 p-10 bg-voto-black text-white hover:bg-voto-orange hover:text-black transition-colors group cursor-default">
+                    <span class="text-2xl font-display font-black text-gray-500 group-hover:text-black block mb-6">ETAPA 04</span>
+                    <h4 class="text-2xl font-bold uppercase mb-4 leading-tight">Viralização <br>Direcionada</h4>
+                    <p class="text-gray-400 group-hover:text-black/80 font-medium font-medium">O vídeo aprovado vira um corte dinâmico para Reels e TikTok, mantendo suas redes alimentadas com qualidade.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==============================================
+         6. FAQ (Perguntas Frequentes - JS Integrado)
+         ============================================== -->
+    <section class="py-32 px-6 md:px-12 bg-[#f8f9fa] border-b border-gray-200">
+        <div class="max-w-4xl mx-auto reveal">
+            <h2 class="text-4xl md:text-5xl font-display font-bold uppercase text-voto-black mb-12 text-center select-none">
+                Dúvidas do Gabinete
+            </h2>
+            
+            <div class="space-y-4">
+                <!-- Item 1 -->
+                <div class="faq-item bg-white border border-gray-200">
+                    <button class="faq-button w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none">
+                        <span class="text-lg font-bold uppercase text-voto-black">Em quanto tempo o site fica pronto?</span>
+                        <span class="faq-icon text-voto-orange font-bold text-2xl">+</span>
+                    </button>
+                    <div class="faq-answer px-6 bg-gray-50">
+                        <p class="text-gray-600 font-medium pb-2">Nosso processo é ágil. Após a aprovação da identidade visual e envio da biografia, entregamos o portal base funcional (Setup) em até 5 dias úteis, pronto para receber as primeiras matérias da transição.</p>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="faq-item bg-white border border-gray-200">
+                    <button class="faq-button w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none">
+                        <span class="text-lg font-bold uppercase text-voto-black">Quem posta no site e nas redes?</span>
+                        <span class="faq-icon text-voto-orange font-bold text-2xl">+</span>
+                    </button>
+                    <div class="faq-answer px-6 bg-gray-50">
+                        <p class="text-gray-600 font-medium pb-2">A VotoImpacto. Caso você feche o pacote completo, nossa equipe sobe as matérias no site e os vídeos no Instagram/TikTok. Tudo passa por um grupo de WhatsApp para aprovação prévia do seu Chefe de Gabinete.</p>
+                    </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="faq-item bg-white border border-gray-200">
+                    <button class="faq-button w-full px-6 py-5 text-left flex justify-between items-center focus:outline-none">
+                        <span class="text-lg font-bold uppercase text-voto-black">A agência atende fora de São Paulo?</span>
+                        <span class="faq-icon text-voto-orange font-bold text-2xl">+</span>
+                    </button>
+                    <div class="faq-answer px-6 bg-gray-50">
+                        <p class="text-gray-600 font-medium pb-2">Sim. Temos o serviço de estruturação tecnológica e social media a nível nacional. Para a cobertura de rua (o Fotógrafo/Vídeomaker), possuímos parceiros credenciados nas principais capitais, ou alocamos um profissional da nossa matriz dependendo do escopo do contrato.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==============================================
+         7. FORMULÁRIO DE CONTATO E CONVERSÃO
+         ============================================== -->
+    <section id="contato" class="py-32 px-6 md:px-12 bg-voto-orange relative border-b-8 border-voto-black">
+        <div class="max-w-5xl mx-auto flex flex-col lg:flex-row items-center gap-16 relative z-10 reveal">
+            
+            <div class="lg:w-1/2">
+                <h2 class="text-5xl md:text-[5rem] font-display font-bold uppercase text-black mb-6 leading-[0.9]">
+                    Antecipe-se <br>ao Futuro.
+                </h2>
+                <p class="text-xl text-black/80 font-medium mb-8 max-w-lg">
+                    Preencha o formulário para conversar com nosso diretor de contas. Montaremos uma proposta comercial sob medida para a sua posse.
+                </p>
+                <div class="flex items-center gap-3 text-black font-bold">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    <span>Informações protegidas por sigilo profissional.</span>
+                </div>
+            </div>
+
+            <div class="lg:w-1/2 w-full">
+                <form class="bg-voto-black p-8 md:p-12 shadow-2xl">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-white font-display font-bold uppercase tracking-widest text-sm mb-2">Nome do Eleito</label>
+                            <input type="text" class="w-full bg-voto-dark border-b-2 border-white/20 py-3 px-4 text-white focus:outline-none focus:border-voto-orange transition-colors" placeholder="Nome Parlamentar">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-white font-display font-bold uppercase tracking-widest text-sm mb-2">Cargo Eletivo</label>
+                            <select class="w-full bg-voto-dark border-b-2 border-white/20 py-3 px-4 text-white focus:outline-none focus:border-voto-orange transition-colors appearance-none rounded-none">
+                                <option value="" class="bg-voto-black">Selecione o cargo assumido</option>
+                                <option value="vereador" class="bg-voto-black">Vereador(a)</option>
+                                <option value="prefeito" class="bg-voto-black">Prefeito(a) / Vice</option>
+                                <option value="deputado" class="bg-voto-black">Deputado(a)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-white font-display font-bold uppercase tracking-widest text-sm mb-2">WhatsApp da Assessoria</label>
+                            <input type="tel" class="w-full bg-voto-dark border-b-2 border-white/20 py-3 px-4 text-white focus:outline-none focus:border-voto-orange transition-colors" placeholder="(00) 00000-0000">
+                        </div>
+
+                        <button type="button" class="w-full bg-white text-black font-display font-bold uppercase tracking-widest text-xl py-5 mt-4 hover:bg-voto-orange transition-colors duration-300">
+                            Solicitar Apresentação
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- Chama o Footer via Jinja2 -->
+    {% include 'public/footer.html' %}
+
+    <!-- ==============================================
+         8. SCRIPTS (Lógica de Tela e Animações)
+         ============================================== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Lógica do Scroll Spy (Animações de Aparecimento)
+            const reveals = document.querySelectorAll('.reveal');
+            const revealOptions = {
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const revealOnScroll = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            }, revealOptions);
+
+            reveals.forEach(reveal => {
+                revealOnScroll.observe(reveal);
+            });
+
+            // 2. Lógica do Acordeão (FAQ)
+            const faqButtons = document.querySelectorAll('.faq-button');
+            faqButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const parent = button.parentElement;
+                    
+                    document.querySelectorAll('.faq-item').forEach(item => {
+                        if(item !== parent) {
+                            item.classList.remove('active');
+                        }
+                    });
+
+                    parent.classList.toggle('active');
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>

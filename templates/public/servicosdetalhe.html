@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dossiê de Operações | VotoImpacto</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Oswald', 'sans-serif'],
+                    },
+                    colors: {
+                        voto: {
+                            orange: '#F59E0B',
+                            black: '#0a0a0a',
+                            dark: '#171717',
+                            gray: '#f4f4f5',
+                            border: '#e5e7eb'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::selection { background-color: #F59E0B; color: #000; }
+        body { background-color: #ffffff; color: #0a0a0a; overflow-x: hidden; }
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #f4f4f5; }
+        ::-webkit-scrollbar-thumb { background: #d4d4d8; border-radius: 0px; }
+        ::-webkit-scrollbar-thumb:hover { background: #F59E0B; }
+
+        img { -webkit-user-drag: none; -khtml-user-drag: none; -moz-user-drag: none; -o-user-drag: none; user-select: none; }
+
+        .bg-grid-light {
+            background-size: 50px 50px;
+            background-image: 
+                linear-gradient(to right, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+        }
+        .bg-grid-dark {
+            background-size: 50px 50px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+
+        .logo-black { filter: invert(1) brightness(0); }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1), transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+
+        /* Estilo para manter a barra lateral fixa no Desktop enquanto o conteúdo rola */
+        .sticky-sidebar {
+            position: -webkit-sticky;
+            position: sticky;
+            top: 8rem;
+        }
+
+        /* Efeito nas caixas de recursos técnicos */
+        .tech-box {
+            transition: all 0.3s ease;
+            border-left: 2px solid transparent;
+        }
+        .tech-box:hover {
+            border-left: 2px solid #F59E0B;
+            background-color: rgba(245, 158, 11, 0.03);
+            transform: translateX(5px);
+        }
+    </style>
+</head>
+<body class="antialiased flex flex-col min-h-screen">
+
+    <!-- Navbar -->
+    {% include 'public/navbar.html' %}
+
+    <!-- ==============================================
+         1. HEADER INTERNO (Dark & Brutal)
+         ============================================== -->
+    <section class="relative pt-40 pb-20 md:pt-48 md:pb-32 px-6 md:px-12 w-full bg-voto-black border-b-8 border-voto-orange overflow-hidden">
+        <div class="absolute inset-0 bg-grid-dark z-0 opacity-50"></div>
+        <div class="max-w-7xl mx-auto w-full flex flex-col items-start relative z-10 reveal">
+            
+            <div class="inline-flex items-center gap-3 border border-white/20 text-white px-4 py-2 mb-8 select-none">
+                <span class="font-display font-bold uppercase tracking-widest text-xs">Uso Exclusivo do Gabinete</span>
+            </div>
+            
+            <h1 class="text-6xl md:text-[5.5rem] lg:text-[7rem] font-display font-bold uppercase leading-[0.9] mb-8 text-white tracking-tighter select-none">
+                Manual de <br>
+                <span class="text-voto-orange">Operações.</span>
+            </h1>
+            
+            <p class="text-xl md:text-2xl text-gray-400 font-sans leading-relaxed max-w-3xl font-medium">
+                Conheça a fundo a engenharia de comunicação da VotoImpacto. Abaixo detalhamos a arquitetura tecnológica, as regras de captação em campo e os gatilhos de edição para a sua transição.
+            </p>
+        </div>
+    </section>
+
+    <!-- ==============================================
+         2. MÓDULO 1: O PORTAL (Claro)
+         ============================================== -->
+    <section class="py-24 md:py-32 px-6 md:px-12 bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 relative">
+            
+            <!-- Sticky Sidebar (Fica travado enquanto o texto passa) -->
+            <div class="lg:w-1/3">
+                <div class="sticky-sidebar reveal">
+                    <span class="text-8xl font-display font-black text-gray-100 block mb-[-1rem] select-none">01</span>
+                    <h2 class="text-4xl font-display font-bold uppercase text-voto-black mb-4 select-none leading-none">
+                        Infraestrutura <br>& Portal
+                    </h2>
+                    <p class="text-gray-600 font-medium leading-relaxed mb-6">
+                        A base da sua soberania digital. Dados blindados e histórico garantido, sem cortes de alcance definidos por Zuckerberg.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Conteúdo Detalhado -->
+            <div class="lg:w-2/3 space-y-16 reveal delay-100">
+                <!-- Bloco A -->
+                <div class="tech-box p-6 md:p-8 border border-gray-100 shadow-sm">
+                    <h4 class="text-2xl font-bold uppercase text-voto-black mb-4 flex items-center gap-3">
+                        <span class="w-3 h-3 bg-voto-orange block"></span> Arquitetura Biográfica
+                    </h4>
+                    <p class="text-lg text-gray-600 leading-relaxed mb-6">
+                        A página inicial do seu mandato não pode ser um currículo em PDF. Construímos uma linha do tempo interativa e focada na sua autoridade política.
+                    </p>
+                    <ul class="space-y-4 font-medium text-voto-black/80">
+                        <li class="flex items-start gap-3"><strong class="text-voto-orange">Estrutura de Bandeiras:</strong> Áreas fixas destacando seus principais eixos de atuação (Saúde, Educação, Segurança).</li>
+                        <li class="flex items-start gap-3"><strong class="text-voto-orange">Mural da Transição:</strong> Repositório central para listar as reuniões oficiais antes da posse.</li>
+                    </ul>
+                </div>
+
+                <!-- Bloco B -->
+                <div class="tech-box p-6 md:p-8 border border-gray-100 shadow-sm">
+                    <h4 class="text-2xl font-bold uppercase text-voto-black mb-4 flex items-center gap-3">
+                        <span class="w-3 h-3 bg-voto-orange block"></span> O Jornal do Gabinete (CMS)
+                    </h4>
+                    <p class="text-lg text-gray-600 leading-relaxed mb-6">
+                        Implementamos um Gerenciador de Conteúdo (CMS) exclusivo. Cada passo da sua agenda vira uma matéria com título e fotos, estruturada com SEO Político para indexar no Google.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-voto-gray p-4 border-l-2 border-voto-black">
+                            <span class="text-xs font-bold uppercase text-gray-500">Vantagem Tática</span>
+                            <p class="text-sm font-medium mt-1">Quando a oposição pesquisar seu nome, a sua versão da história será o primeiro resultado.</p>
+                        </div>
+                        <div class="bg-voto-gray p-4 border-l-2 border-voto-black">
+                            <span class="text-xs font-bold uppercase text-gray-500">Imprensa</span>
+                            <p class="text-sm font-medium mt-1">Área anexa para jornalistas locais baixarem fotos em alta resolução (Press Kit).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==============================================
+         3. MÓDULO 2: O CAMPO (Cinza / Grid Background)
+         ============================================== -->
+    <section class="py-24 md:py-32 px-6 md:px-12 bg-voto-gray relative overflow-hidden border-b border-gray-300">
+        <div class="absolute inset-0 bg-grid-light z-0 opacity-40"></div>
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 relative z-10">
+            
+            <div class="lg:w-1/3">
+                <div class="sticky-sidebar reveal">
+                    <span class="text-8xl font-display font-black text-gray-300 block mb-[-1rem] select-none">02</span>
+                    <h2 class="text-4xl font-display font-bold uppercase text-voto-black mb-4 select-none leading-none">
+                        Operação <br>de Rua
+                    </h2>
+                    <p class="text-gray-600 font-medium leading-relaxed mb-6">
+                        Despachamos profissionais especializados para registrar os passos do mandato in loco, com qualidade de documentário corporativo.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="lg:w-2/3 space-y-16 reveal delay-100">
+                <!-- Bloco A -->
+                <div class="tech-box p-6 md:p-8 bg-white border border-gray-200 shadow-sm">
+                    <h4 class="text-2xl font-bold uppercase text-voto-black mb-4 flex items-center gap-3">
+                        <span class="w-3 h-3 bg-voto-black block"></span> O Analista de Acompanhamento
+                    </h4>
+                    <p class="text-lg text-gray-600 leading-relaxed mb-4">
+                        Substituímos o "assessor com celular" por um profissional técnico de captação. O Analista da VotoImpacto possui diretrizes rígidas de postura: atua de forma discreta para não atrapalhar suas articulações, garantindo um olhar fotojornalístico sobre a sua rotina.
+                    </p>
+                </div>
+
+                <!-- Bloco B -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="tech-box p-6 md:p-8 bg-white border border-gray-200 shadow-sm">
+                        <h5 class="font-display font-bold text-2xl uppercase mb-3 text-voto-black">Lentes e Imagem</h5>
+                        <p class="text-gray-600 font-medium">
+                            Fotografia feita com lentes claras (Profundidade de Campo rasa) para isolar o político no meio da multidão. O foco está no aperto de mão, na escuta ativa e no contato visual.
+                        </p>
+                    </div>
+                    <div class="tech-box p-6 md:p-8 bg-white border border-gray-200 shadow-sm">
+                        <h5 class="font-display font-bold text-2xl uppercase mb-3 text-voto-black">Áudio Direcional</h5>
+                        <p class="text-gray-600 font-medium">
+                            Uso de lapelas e microfones tipo shotgun (direcionais). Um vídeo em qualidade 4K não tem utilidade política se a sua fala estiver ofuscada pelo barulho da rua.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==============================================
+         4. MÓDULO 3: REDES (Preto / Brutal)
+         ============================================== -->
+    <section class="py-24 md:py-32 px-6 md:px-12 bg-voto-black text-white relative border-b-8 border-voto-orange">
+        <div class="absolute inset-0 bg-grid-dark z-0 opacity-20"></div>
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-16 relative z-10">
+            
+            <div class="lg:w-1/3">
+                <div class="sticky-sidebar reveal">
+                    <span class="text-8xl font-display font-black text-gray-800 block mb-[-1rem] select-none">03</span>
+                    <h2 class="text-4xl font-display font-bold uppercase text-white mb-4 select-none leading-none">
+                        Distribuição <br>& Engajamento
+                    </h2>
+                    <p class="text-gray-400 font-medium leading-relaxed mb-6">
+                        O material bruto da rua chega na nossa mesa de edição, onde é lapidado para quebrar a lógica do algoritmo.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="lg:w-2/3 space-y-16 reveal delay-100">
+                <!-- Bloco A -->
+                <div class="tech-box p-6 md:p-8 border border-white/10 bg-[#111]">
+                    <h4 class="text-2xl font-bold uppercase text-white mb-4 flex items-center gap-3">
+                        <span class="w-3 h-3 bg-voto-orange block"></span> Retenção (Reels e TikTok)
+                    </h4>
+                    <p class="text-lg text-gray-400 leading-relaxed mb-6">
+                        O algoritmo não perdoa discursos lentos. Nossa ilha de edição extrai os 30 a 60 segundos mais potentes da sua agenda. Aplicamos Color Grading (tratamento de cor para padrão de documentário) e B-rolls dinâmicos.
+                    </p>
+                    <div class="bg-voto-dark p-5 border-l-4 border-voto-orange">
+                        <span class="text-white font-bold uppercase text-sm block mb-1">Tipografia e Legendas Ativas</span>
+                        <p class="text-gray-400 text-sm">Mais de 60% dos eleitores assistem vídeos no mudo (em transporte público ou trabalho). As legendas da VotoImpacto são grandes, animadas palavra por palavra e cravadas no timing da sua voz.</p>
+                    </div>
+                </div>
+
+                <!-- Bloco B -->
+                <div class="tech-box p-6 md:p-8 border border-white/10 bg-[#111]">
+                    <h4 class="text-2xl font-bold uppercase text-white mb-4 flex items-center gap-3">
+                        <span class="w-3 h-3 bg-voto-orange block"></span> Design Editorial (Carrosséis)
+                    </h4>
+                    <p class="text-lg text-gray-400 leading-relaxed mb-4">
+                        Rejeitamos a estética de "folheto de supermercado" ou posts fofos gerados por Inteligência Artificial. Seu gabinete exige estética editorial.
+                    </p>
+                    <ul class="space-y-3 font-medium text-gray-400">
+                        <li class="flex items-center gap-3"><span class="text-voto-orange">■</span> Uso ostensivo de fotos REAIS e preto & branco em transições.</li>
+                        <li class="flex items-center gap-3"><span class="text-voto-orange">■</span> Textos curtos, diretos e institucionais.</li>
+                        <li class="flex items-center gap-3"><span class="text-voto-orange">■</span> Grid planejado e coesão visual na paleta do mandato.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==============================================
+         5. CALL TO ACTION FINAL
+         ============================================== -->
+    <section class="py-32 px-6 md:px-12 bg-white text-center">
+        <div class="max-w-4xl mx-auto reveal">
+            <svg class="w-12 h-12 mx-auto text-voto-black mb-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+            
+            <h2 class="text-4xl md:text-5xl font-display font-bold uppercase leading-none mb-6 text-voto-black select-none">
+                Parece complexo? <br>
+                <span class="text-gray-400 text-3xl">É porque não somos freelancers.</span>
+            </h2>
+            <p class="text-xl text-gray-600 font-medium mb-12 max-w-2xl mx-auto">
+                Toda essa estrutura é absorvida pela nossa equipe. Nós entregamos o resultado pronto, passando pela aprovação da sua chefia de gabinete antes de qualquer publicação.
+            </p>
+            
+            <a href="/#contato" class="bg-voto-orange text-voto-black font-display font-bold uppercase tracking-widest text-xl px-12 py-6 hover:bg-voto-black hover:text-white transition-colors duration-300 inline-block shadow-[8px_8px_0px_0px_rgba(10,10,10,1)] hover:shadow-none hover:translate-y-2 hover:translate-x-2">
+                Solicitar Orçamento do Gabinete
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    {% include 'public/footer.html' %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const reveals = document.querySelectorAll('.reveal');
+            const revealOnScroll = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                        observer.unobserve(entry.target); 
+                    }
+                });
+            }, {
+                threshold: 0.15,
+                rootMargin: "0px 0px -50px 0px"
+            });
+            reveals.forEach(reveal => revealOnScroll.observe(reveal));
+        });
+    </script>
+</body>
+</html>
